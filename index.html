@@ -518,7 +518,7 @@ function toggleSlot(day, stage, slot){
 ========================================================= */
 const TIME_START = "10:00";
 const TIME_END   = "29:30";
-const STEP_MIN   = 10;
+const STEP_MIN   = 5; // 5分刻み(21:45 / 23:15 / 23:35 等の枠を正しく配置するため)
 function toMin(t){ const [h,m] = t.split(":").map(Number); return h*60+m; }
 function fromMin(min){
   const h = Math.floor(min/60), m = min%60;
@@ -542,7 +542,7 @@ function renderPredict(){
   const stageColMin = isMobile ? 110 : 170;
   const timeColW = isMobile ? 44 : 56;
   grid.style.gridTemplateColumns = `${timeColW}px repeat(${visibleStages.length}, minmax(${stageColMin}px,1fr))`;
-  grid.style.gridTemplateRows = `34px repeat(${rows}, ${isMobile?12:13}px)`;
+  grid.style.gridTemplateRows = `34px repeat(${rows}, ${isMobile?6:7}px)`;
   grid.style.minWidth = (timeColW + visibleStages.length * stageColMin + 24) + "px";
   grid.innerHTML = "";
 
@@ -717,7 +717,7 @@ function renderMyTimetable(root){
   const dayColMin = isMobile ? 240 : 480;
   const subColMin = Math.max(60, Math.floor(dayColMin / subDiv));
   grid.style.gridTemplateColumns = `${timeColW}px repeat(${subDiv}, minmax(${subColMin}px,1fr))`;
-  grid.style.gridTemplateRows = `44px repeat(${rows}, ${isMobile?14:16}px)`;
+  grid.style.gridTemplateRows = `44px repeat(${rows}, ${isMobile?7:8}px)`;
   grid.style.minWidth = (timeColW + subDiv * subColMin + 16) + "px";
   grid.style.gap = "3px";
 
