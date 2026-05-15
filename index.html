@@ -249,7 +249,7 @@
   <!-- マイタイムテーブル -->
   <section class="view" id="view-my">
     <div class="my-toolbar">
-      <button class="btn" id="exportBtn">画像保存 (PNG)</button>
+      <button class="btn" id="exportBtn">画像保存</button>
       <button class="btn secondary" id="clearBtn">クリア</button>
       <div class="mode-toggle" role="tablist">
         <button class="active" data-mode="timetable">タイムテーブル</button>
@@ -881,14 +881,48 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
       scale: 2, useCORS: true,
       windowWidth: Math.max(target.scrollWidth, target.clientWidth),
     });
-    const link = document.createElement("a");
-    link.download = `my_fujirock_2026_${ymdNow()}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    const filename = `my_fujirock_2026_${ymdNow()}.png`;
+    const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
+    if (!blob) throw new Error("Blob生成失敗");
+    const file = new File([blob], filename, { type:"image/png" });
+
+    // 1) Web Share API (iOS/Android の共有シートから「画像を保存」)
+    if (navigator.canShare && navigator.canShare({ files:[file] })){
+      try {
+        await navigator.share({ files:[file], title:"My FUJI ROCK 2026" });
+        return;
+      } catch(e){
+        if (e.name === "AbortError") return; // ユーザーキャンセル
+        // それ以外はフォールバックへ
+      }
+    }
+
+    // 2) スマホで Share API 非対応 → 新規タブで開いて長押し保存
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const url = URL.createObjectURL(blob);
+    if (isMobile){
+      const w = window.open();
+      if (w){
+        w.document.write(`<title>${filename}</title><body style="margin:0;background:#000"><img src="${url}" style="max-width:100%;display:block;margin:auto" alt="長押しで保存"></body>`);
+        w.document.close();
+      } else {
+        // ポップアップブロック対策で同タブで開く
+        location.href = url;
+      }
+    } else {
+      // 3) PC は従来通りダウンロード
+      const a = document.createElement("a");
+      a.download = filename;
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
   } catch(e){
     alert("画像生成でエラーが発生しました: " + e.message);
   } finally {
-    btn.disabled = false; btn.textContent = "画像保存 (PNG)";
+    btn.disabled = false; btn.textContent = "画像保存";
   }
 });
 function ymdNow(){
