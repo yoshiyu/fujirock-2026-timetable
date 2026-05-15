@@ -194,7 +194,14 @@
     padding:8px;font-style:italic;
   }
 
-  footer{padding:24px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.7}
+  footer{padding:20px 14px 32px;color:var(--muted);font-size:11px;line-height:1.7;max-width:900px;margin:0 auto}
+  footer .copy{text-align:center;margin-top:10px;opacity:.7}
+  footer .footer-notes{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  footer .footer-notes summary{cursor:pointer;color:var(--text);font-size:12px;font-weight:700}
+  footer .footer-notes ul{margin:8px 0 0 18px;padding:0}
+  footer .footer-notes li{margin-bottom:4px;line-height:1.6}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
 
   /* ============ Mobile ============ */
   @media (max-width:640px){
@@ -228,47 +235,11 @@
     <button class="day-tab" data-day="day2">7/25 SAT</button>
     <button class="day-tab" data-day="day3">7/26 SUN</button>
   </div>
-  <div class="filter-row" id="stageTabs">
-    <span class="filter-label">STAGE</span>
-    <button class="stage-tab active" data-stage="all">全て</button>
-    <button class="stage-tab" data-stage="GREEN">GREEN</button>
-    <button class="stage-tab" data-stage="WHITE">WHITE</button>
-    <button class="stage-tab" data-stage="RED">RED</button>
-    <button class="stage-tab" data-stage="HEAVEN">HEAVEN</button>
-    <button class="stage-tab" data-stage="SUNDAY">SUNDAY</button>
-  </div>
 </header>
 
 <main>
   <!-- 予測タイムテーブル -->
   <section class="view active" id="view-predict">
-    <div class="notice">
-      <b>予測の作り方</b><br>
-      ① 昨年(2025)の各ステージのタイムテーブル枠をベースに、<b>2026年に同じ曜日</b>の枠へ当てはめ<br>
-      ② 2026発表済アーティストを <b>(出演日 × ステージ)</b> でグルーピング、<b>発表順</b> でソート<br>
-      ③ <b>発表順が早い人を、より遅い時間帯の枠</b> に配置(早く発表 ≒ 上位ビリング)<br>
-      ④ 足りない枠は <b>TBA</b> + 「昨年の同枠の出演者」を併記<br>
-      ⑤ アーティスト枠をタップ → マイタイムテーブルに追加
-      <details>
-        <summary>ソース / 注意事項</summary>
-        <ul>
-          <li>2026ラインナップ: <a href="https://fujirockfestival.com/artist/index" target="_blank">公式 LINEUP</a> + 第1弾日付別(<a href="https://qetic.jp/music/fuji-rock-2026_linup-v01/472822/" target="_blank">Qetic</a>) + 第2弾(<a href="https://fujirockfestival.com/news/detail/2f69f4584ad9e36" target="_blank">公式</a>) + 第3弾(<a href="https://www.wwdjapan.com/articles/2396953" target="_blank">WWD</a>) + 第4弾(<a href="https://nme-jp.com/news/168146/" target="_blank">NME</a>)</li>
-          <li>2025タイムテーブル: <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-1/" target="_blank">Day1</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-2/" target="_blank">Day2</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-3/" target="_blank">Day3</a></li>
-          <li>SUNDAY SESSIONは2026新設のため2025深夜枠(GAN-BAN等)を参考に時間合成</li>
-          <li>ROUTE 17 Rock'n'Roll ORCHESTRAは出演日未発表のため7/25 GREENに仮置き</li>
-        </ul>
-      </details>
-    </div>
-
-    <div class="legend">
-      <div class="lg"><span class="sw" style="background:var(--green)"></span>GREEN</div>
-      <div class="lg"><span class="sw" style="background:var(--white-s)"></span>WHITE</div>
-      <div class="lg"><span class="sw" style="background:var(--red-m)"></span>RED MARQUEE</div>
-      <div class="lg"><span class="sw" style="background:var(--heaven)"></span>FIELD OF HEAVEN</div>
-      <div class="lg"><span class="sw" style="background:var(--sunday)"></span>SUNDAY SESSION</div>
-      <div class="lg"><span class="sw" style="background:#3a4d44"></span>TBA</div>
-    </div>
-
     <div class="scroll-hint">← スワイプで横スクロール →</div>
     <div class="tt-wrap">
       <div class="tt-grid" id="ttGrid"></div>
@@ -297,7 +268,17 @@
 </main>
 
 <footer>
-  Fan-made prediction tool. Not affiliated with SMASH / FUJI ROCK FESTIVAL.
+  <details class="footer-notes">
+    <summary>ソース / 注意事項</summary>
+    <ul>
+      <li>当てはめロジック: 昨年(2025)の各ステージの枠を、2026年に同じ曜日の枠へ流用。発表済アーティストを(出演日 × ステージ)で発表順に並べ、早く発表された人ほど遅い時間帯の枠に配置(発表順 ≒ ビリング順 と仮定)。足りない枠は TBA + 昨年の同枠出演者を併記</li>
+      <li>2026ラインナップ: <a href="https://fujirockfestival.com/artist/index" target="_blank">公式 LINEUP</a> + 第1弾日付別(<a href="https://qetic.jp/music/fuji-rock-2026_linup-v01/472822/" target="_blank">Qetic</a>) + 第2弾(<a href="https://fujirockfestival.com/news/detail/2f69f4584ad9e36" target="_blank">公式</a>) + 第3弾(<a href="https://www.wwdjapan.com/articles/2396953" target="_blank">WWD</a>) + 第4弾(<a href="https://nme-jp.com/news/168146/" target="_blank">NME</a>)</li>
+      <li>2025タイムテーブル: <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-1/" target="_blank">Day1</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-2/" target="_blank">Day2</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-3/" target="_blank">Day3</a></li>
+      <li>SUNDAY SESSIONは2026新設のため2025深夜枠(GAN-BAN等)を参考に時間合成</li>
+      <li>ROUTE 17 Rock'n'Roll ORCHESTRAは出演日未発表のため7/25 GREENに仮置き</li>
+    </ul>
+  </details>
+  <div class="copy">Fan-made prediction tool. Not affiliated with SMASH / FUJI ROCK FESTIVAL.</div>
 </footer>
 
 <script>
@@ -505,7 +486,6 @@ const LS_KEY = "fr2026_my_tt_v2";
 let myList = loadMyList();
 let currentDay = "day1";
 let currentView = "predict";
-let currentStage = "all";
 let myMode = "timetable";
 
 function loadMyList(){
@@ -557,11 +537,9 @@ function renderPredict(){
   const startMin = toMin(TIME_START);
   const endMin   = toMin(TIME_END);
   const rows     = (endMin - startMin) / STEP_MIN;
-  const visibleStages = currentStage === "all" ? STAGES : STAGES.filter(s => s.key === currentStage);
+  const visibleStages = STAGES;
   const isMobile = window.matchMedia("(max-width:640px)").matches;
-  const stageColMin = currentStage === "all"
-    ? (isMobile ? 110 : 170)
-    : (isMobile ? 240 : 360);
+  const stageColMin = isMobile ? 110 : 170;
   const timeColW = isMobile ? 44 : 56;
   grid.style.gridTemplateColumns = `${timeColW}px repeat(${visibleStages.length}, minmax(${stageColMin}px,1fr))`;
   grid.style.gridTemplateRows = `34px repeat(${rows}, ${isMobile?12:13}px)`;
@@ -868,7 +846,6 @@ document.querySelectorAll(".tab").forEach(t => {
     document.getElementById("view-predict").classList.toggle("active", currentView==="predict");
     document.getElementById("view-my").classList.toggle("active", currentView==="my");
     document.getElementById("dayTabs").style.display = ""; // 両画面で表示
-    document.getElementById("stageTabs").style.display = currentView==="predict" ? "" : "none";
   });
 });
 document.querySelectorAll(".day-tab").forEach(t => {
@@ -878,14 +855,6 @@ document.querySelectorAll(".day-tab").forEach(t => {
     currentDay = t.dataset.day;
     renderPredict();
     renderMy();
-  });
-});
-document.querySelectorAll(".stage-tab").forEach(t => {
-  t.addEventListener("click", () => {
-    document.querySelectorAll(".stage-tab").forEach(x => x.classList.remove("active"));
-    t.classList.add("active");
-    currentStage = t.dataset.stage;
-    renderPredict();
   });
 });
 document.querySelectorAll(".mode-toggle button").forEach(b => {
