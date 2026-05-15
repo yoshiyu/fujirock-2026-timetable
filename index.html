@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FUJI ROCK 2026 タイムテーブル予測 & マイタイムテーブル</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg:#0e1a14;
+    --panel:#152821;
+    --panel2:#1c3329;
+    --line:#2a4a3c;
+    --text:#e8f2ec;
+    --muted:#8aa89a;
+    --accent:#ffd23f;
+    --accent2:#ff5b3d;
+    --green:#3fa66a;
+    --white-s:#7a8a82;
+    --red-m:#c34a3a;
+    --heaven:#7a5cd6;
+    --sunday:#e08a2b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;-webkit-text-size-adjust:100%}
+  header{
+    padding:14px 16px;
+    background:linear-gradient(135deg,#0e1a14 0%,#1c3329 50%,#0e1a14 100%);
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:50;
+  }
+  .title{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .title h1{margin:0;font-size:20px;letter-spacing:.04em;}
+  .title h1 .accent{color:var(--accent)}
+  .title .sub{color:var(--muted);font-size:11px}
+  .tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .tab{
+    background:var(--panel);color:var(--text);
+    border:1px solid var(--line);
+    padding:8px 14px;border-radius:999px;cursor:pointer;
+    font-size:13px;transition:.15s;
+  }
+  .tab:hover{background:var(--panel2)}
+  .tab.active{background:var(--accent);color:#1a1a1a;border-color:var(--accent);font-weight:700}
+  .filter-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+  .filter-label{color:var(--muted);font-size:11px;margin-right:2px}
+  .day-tab,.stage-tab{
+    background:transparent;color:var(--muted);
+    border:1px solid var(--line);
+    padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;
+  }
+  .day-tab.active{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+  .stage-tab.active{background:var(--panel2);color:var(--text);border-color:var(--muted)}
+  .stage-tab.active[data-stage="GREEN"]{background:var(--green);color:#fff;border-color:var(--green)}
+  .stage-tab.active[data-stage="WHITE"]{background:var(--white-s);color:#fff;border-color:var(--white-s)}
+  .stage-tab.active[data-stage="RED"]{background:var(--red-m);color:#fff;border-color:var(--red-m)}
+  .stage-tab.active[data-stage="HEAVEN"]{background:var(--heaven);color:#fff;border-color:var(--heaven)}
+  .stage-tab.active[data-stage="SUNDAY"]{background:var(--sunday);color:#fff;border-color:var(--sunday)}
+
+  main{padding:12px}
+  .view{display:none}
+  .view.active{display:block}
+
+  .notice{
+    background:var(--panel);border:1px dashed var(--line);
+    border-radius:10px;padding:10px 14px;margin-bottom:12px;
+    color:var(--muted);font-size:12px;line-height:1.7;
+  }
+  .notice b{color:var(--accent)}
+  .notice details{margin-top:6px}
+  .notice summary{cursor:pointer;color:var(--text);font-size:12px}
+  .notice ul{margin:6px 0 0 18px;padding:0}
+  .notice a{color:var(--accent);text-decoration:none}
+  .notice a:hover{text-decoration:underline}
+
+  .scroll-hint{
+    color:var(--muted);font-size:10px;text-align:right;
+    padding:2px 4px;margin-bottom:4px;display:none;
+  }
+
+  /* Timetable grid (shared by predict & my) */
+  .tt-wrap{
+    overflow-x:auto;background:var(--panel);
+    border-radius:14px;border:1px solid var(--line);padding:8px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tt-grid{
+    display:grid;
+    gap:3px;
+    position:relative;
+  }
+  .tt-stage-head{
+    position:sticky;top:0;background:var(--panel);
+    padding:6px 4px;text-align:center;font-size:11px;font-weight:700;
+    letter-spacing:.04em;border-bottom:2px solid var(--line);z-index:2;
+  }
+  .tt-time-head{
+    position:sticky;left:0;background:var(--panel);
+    padding:0 4px;font-size:10px;color:var(--muted);
+    text-align:right;border-right:1px solid var(--line);z-index:1;
+  }
+  .tt-cell{background:var(--panel2);border-radius:3px;min-height:12px}
+  .tt-slot{
+    border-radius:6px;padding:5px 6px;font-size:11px;line-height:1.25;color:#fff;
+    cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.25);overflow:hidden;
+    display:flex;flex-direction:column;justify-content:center;
+    transition:transform .1s, filter .15s;
+  }
+  .tt-slot:hover{filter:brightness(1.1);transform:translateY(-1px)}
+  .tt-slot.added{outline:2px solid var(--accent);outline-offset:-2px}
+  .tt-slot .name{font-weight:700;font-size:12px}
+  .tt-slot .time{font-size:9px;opacity:.85;margin-top:2px}
+  .tt-slot .ly{font-size:9px;opacity:.7;margin-top:1px;font-style:italic}
+  .tt-slot.s-GREEN{background:var(--green)}
+  .tt-slot.s-WHITE{background:var(--white-s)}
+  .tt-slot.s-RED{background:var(--red-m)}
+  .tt-slot.s-HEAVEN{background:var(--heaven)}
+  .tt-slot.s-SUNDAY{background:var(--sunday)}
+  .tt-slot.tba{background:#3a4d44;color:#b6c8be;cursor:default}
+  .tt-slot.tba:hover{transform:none;filter:none}
+  .tt-slot.tba .name{font-weight:600;opacity:.85}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;font-size:10px;color:var(--muted)}
+  .legend .lg{display:flex;align-items:center;gap:4px}
+  .legend .sw{width:12px;height:12px;border-radius:3px}
+
+  /* My timetable */
+  .my-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .btn{
+    background:var(--accent);color:#1a1a1a;border:none;
+    padding:9px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;
+  }
+  .btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+  .btn:hover{filter:brightness(1.08)}
+  .btn:disabled{opacity:.5;cursor:wait}
+  .mode-toggle{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .mode-toggle button{
+    background:transparent;color:var(--muted);border:none;
+    padding:8px 12px;cursor:pointer;font-size:12px;
+  }
+  .mode-toggle button.active{background:var(--panel2);color:var(--text)}
+
+  #myCapture{background:var(--bg);padding:14px;border-radius:14px;border:1px solid var(--line)}
+  .my-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+  .my-header h2{margin:0;font-size:18px;letter-spacing:.04em}
+  .my-header h2 .accent{color:var(--accent)}
+  .my-header .ymd{color:var(--muted);font-size:11px}
+  .my-empty{color:var(--muted);font-size:13px;padding:18px;text-align:center;background:var(--panel);border-radius:8px}
+
+  /* My list view */
+  .my-day{margin-bottom:14px}
+  .my-day h3{
+    margin:0 0 6px;font-size:13px;color:var(--accent);
+    border-left:4px solid var(--accent2);padding-left:8px;
+  }
+  .my-list{display:grid;grid-template-columns:1fr;gap:6px}
+  .my-item{
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;
+    padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;
+  }
+  .my-item .meta{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+  .my-item .a-name{font-weight:700;word-break:break-word;font-size:13px}
+  .my-item .a-info{font-size:11px;color:var(--muted)}
+  .stage-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .remove{
+    background:transparent;border:1px solid var(--line);color:var(--muted);
+    border-radius:6px;padding:4px 8px;cursor:pointer;font-size:11px;flex-shrink:0;
+  }
+  .remove:hover{background:#3a1f1f;color:#fff;border-color:#7a2a22}
+  .conflict{background:#3a1f1f !important;border-color:var(--red-m) !important}
+  .conflict-tag{background:var(--red-m);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px}
+
+  /* My timetable view: 3日カラム x 時間軸 */
+  .my-tt-wrap{
+    overflow-x:auto;background:var(--panel);border-radius:10px;
+    border:1px solid var(--line);padding:6px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .my-tt-grid{display:grid;gap:3px;position:relative}
+  .my-tt-head{
+    position:sticky;top:0;background:var(--panel);
+    padding:6px 4px;text-align:center;font-size:12px;font-weight:700;
+    border-bottom:2px solid var(--line);z-index:2;
+  }
+  .my-tt-head .sub{display:block;font-size:9px;color:var(--muted);font-weight:400;margin-top:2px}
+  .my-tt-time{
+    position:sticky;left:0;background:var(--panel);
+    padding:0 4px;font-size:10px;color:var(--muted);text-align:right;
+    border-right:1px solid var(--line);z-index:1;
+  }
+  .my-tt-cell{background:#1a2e26;border-radius:3px;min-height:12px}
+  .my-tt-empty-msg{
+    color:var(--muted);font-size:11px;text-align:center;
+    padding:8px;font-style:italic;
+  }
+
+  footer{padding:24px 14px;text-align:center;color:var(--muted);font-size:11px;line-height:1.7}
+
+  /* ============ Mobile ============ */
+  @media (max-width:640px){
+    header{padding:12px 12px}
+    .title h1{font-size:17px}
+    .title .sub{font-size:10px}
+    main{padding:10px 8px}
+    .notice{font-size:11px;padding:8px 10px}
+    .tt-slot .name{font-size:11px}
+    .tt-slot .time, .tt-slot .ly{font-size:9px}
+    .btn{font-size:12px;padding:8px 12px}
+    .scroll-hint{display:block}
+    #myCapture{padding:10px}
+    .my-header h2{font-size:16px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>FUJI ROCK <span class="accent">2026</span> タイムテーブル予測</h1>
+    <span class="sub">2026.7.24(FRI) - 7.26(SUN) @ NAEBA</span>
+  </div>
+  <div class="tabs">
+    <button class="tab active" data-view="predict">予測タイムテーブル</button>
+    <button class="tab" data-view="my">マイタイムテーブル</button>
+  </div>
+  <div class="filter-row" id="dayTabs">
+    <span class="filter-label">DAY</span>
+    <button class="day-tab active" data-day="day1">7/24 FRI</button>
+    <button class="day-tab" data-day="day2">7/25 SAT</button>
+    <button class="day-tab" data-day="day3">7/26 SUN</button>
+  </div>
+  <div class="filter-row" id="stageTabs">
+    <span class="filter-label">STAGE</span>
+    <button class="stage-tab active" data-stage="all">全て</button>
+    <button class="stage-tab" data-stage="GREEN">GREEN</button>
+    <button class="stage-tab" data-stage="WHITE">WHITE</button>
+    <button class="stage-tab" data-stage="RED">RED</button>
+    <button class="stage-tab" data-stage="HEAVEN">HEAVEN</button>
+    <button class="stage-tab" data-stage="SUNDAY">SUNDAY</button>
+  </div>
+</header>
+
+<main>
+  <!-- 予測タイムテーブル -->
+  <section class="view active" id="view-predict">
+    <div class="notice">
+      <b>予測の作り方</b><br>
+      ① 昨年(2025)の各ステージのタイムテーブル枠をベースに、<b>2026年に同じ曜日</b>の枠へ当てはめ<br>
+      ② 2026発表済アーティストを <b>(出演日 × ステージ)</b> でグルーピング、<b>発表順</b> でソート<br>
+      ③ <b>発表順が早い人を、より遅い時間帯の枠</b> に配置(早く発表 ≒ 上位ビリング)<br>
+      ④ 足りない枠は <b>TBA</b> + 「昨年の同枠の出演者」を併記<br>
+      ⑤ アーティスト枠をタップ → マイタイムテーブルに追加
+      <details>
+        <summary>ソース / 注意事項</summary>
+        <ul>
+          <li>2026ラインナップ: <a href="https://fujirockfestival.com/artist/index" target="_blank">公式 LINEUP</a> + 第1弾日付別(<a href="https://qetic.jp/music/fuji-rock-2026_linup-v01/472822/" target="_blank">Qetic</a>) + 第2弾(<a href="https://fujirockfestival.com/news/detail/2f69f4584ad9e36" target="_blank">公式</a>) + 第3弾(<a href="https://www.wwdjapan.com/articles/2396953" target="_blank">WWD</a>) + 第4弾(<a href="https://nme-jp.com/news/168146/" target="_blank">NME</a>)</li>
+          <li>2025タイムテーブル: <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-1/" target="_blank">Day1</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-2/" target="_blank">Day2</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-3/" target="_blank">Day3</a></li>
+          <li>SUNDAY SESSIONは2026新設のため2025深夜枠(GAN-BAN等)を参考に時間合成</li>
+          <li>ROUTE 17 Rock'n'Roll ORCHESTRAは出演日未発表のため7/25 GREENに仮置き</li>
+        </ul>
+      </details>
+    </div>
+
+    <div class="legend">
+      <div class="lg"><span class="sw" style="background:var(--green)"></span>GREEN</div>
+      <div class="lg"><span class="sw" style="background:var(--white-s)"></span>WHITE</div>
+      <div class="lg"><span class="sw" style="background:var(--red-m)"></span>RED MARQUEE</div>
+      <div class="lg"><span class="sw" style="background:var(--heaven)"></span>FIELD OF HEAVEN</div>
+      <div class="lg"><span class="sw" style="background:var(--sunday)"></span>SUNDAY SESSION</div>
+      <div class="lg"><span class="sw" style="background:#3a4d44"></span>TBA</div>
+    </div>
+
+    <div class="scroll-hint">← スワイプで横スクロール →</div>
+    <div class="tt-wrap">
+      <div class="tt-grid" id="ttGrid"></div>
+    </div>
+  </section>
+
+  <!-- マイタイムテーブル -->
+  <section class="view" id="view-my">
+    <div class="my-toolbar">
+      <button class="btn" id="exportBtn">画像保存 (PNG)</button>
+      <button class="btn secondary" id="clearBtn">クリア</button>
+      <div class="mode-toggle" role="tablist">
+        <button class="active" data-mode="timetable">タイムテーブル</button>
+        <button data-mode="list">リスト</button>
+      </div>
+    </div>
+
+    <div id="myCapture">
+      <div class="my-header">
+        <h2>My FUJI ROCK <span class="accent">2026</span></h2>
+        <span class="ymd">2026.7.24 - 7.26 @ NAEBA</span>
+      </div>
+      <div id="myContent"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Fan-made prediction tool. Not affiliated with SMASH / FUJI ROCK FESTIVAL.
+</footer>
+
+<script>
+/* =========================================================
+   STAGES
+========================================================= */
+const STAGES = [
+  { key:"GREEN",  label:"GREEN STAGE" },
+  { key:"WHITE",  label:"WHITE STAGE" },
+  { key:"RED",    label:"RED MARQUEE" },
+  { key:"HEAVEN", label:"FIELD OF HEAVEN" },
+  { key:"SUNDAY", label:"SUNDAY SESSION" },
+];
+const STAGE_COLORS = {
+  GREEN:"#3fa66a", WHITE:"#7a8a82", RED:"#c34a3a",
+  HEAVEN:"#7a5cd6", SUNDAY:"#e08a2b"
+};
+
+/* =========================================================
+   2025 タイムテーブル(枠テンプレート)
+========================================================= */
+const SLOTS_2025 = {
+  day1: {
+    GREEN: [
+      {start:"11:00", end:"12:00", ly:"US"},
+      {start:"13:00", end:"14:00", ly:"池畑潤二 他12名"},
+      {start:"15:00", end:"16:00", ly:"BRAHMAN"},
+      {start:"17:00", end:"18:00", ly:"HYUKOH × Sunset Rollercoaster"},
+      {start:"19:00", end:"20:10", ly:"Vaundy"},
+      {start:"21:10", end:"22:40", ly:"FRED AGAIN.."},
+    ],
+    WHITE: [
+      {start:"12:10", end:"13:00", ly:"おとぼけビ〜バ〜"},
+      {start:"14:00", end:"14:50", ly:"ECCA VANDAL"},
+      {start:"15:50", end:"16:50", ly:"MDOU MOCTAR"},
+      {start:"17:40", end:"18:40", ly:"MIYAVI"},
+      {start:"19:40", end:"20:40", ly:"OK GO"},
+      {start:"22:00", end:"23:30", ly:"Suchmos"},
+    ],
+    RED: [
+      {start:"11:30", end:"12:10", ly:"kurayamisaka"},
+      {start:"12:40", end:"13:30", ly:"TOMOO"},
+      {start:"14:00", end:"15:00", ly:"MARCIN"},
+      {start:"16:00", end:"17:00", ly:"青葉市子"},
+      {start:"18:00", end:"19:00", ly:"PERFUME GENIUS"},
+      {start:"20:10", end:"21:10", ly:"TYCHO"},
+      {start:"23:30", end:"24:30", ly:"坂本慎太郎"},
+    ],
+    HEAVEN: [
+      {start:"11:30", end:"12:20", ly:"トリプルファイヤー"},
+      {start:"13:20", end:"14:20", ly:"KIRINJI"},
+      {start:"15:10", end:"16:10", ly:"ANSWER TO REMEMBER"},
+      {start:"17:10", end:"18:10", ly:"PARLOR GREENS"},
+      {start:"19:00", end:"20:10", ly:"MAYA DELILAH"},
+      {start:"21:45", end:"23:15", ly:"EZRA COLLECTIVE"},
+    ],
+    SUNDAY: [
+      {start:"22:00", end:"23:00", ly:"(2025は別ステージ深夜枠)"},
+      {start:"23:30", end:"24:30", ly:"(2025は別ステージ深夜枠)"},
+      {start:"25:00", end:"26:00", ly:"(2025は別ステージ深夜枠)"},
+      {start:"26:30", end:"27:30", ly:"(2025は別ステージ深夜枠)"},
+      {start:"28:00", end:"29:00", ly:"(2025は別ステージ深夜枠)"},
+    ],
+  },
+  day2: {
+    GREEN: [
+      {start:"11:00", end:"12:00", ly:"CA7RIEL & PACO AMOROSO"},
+      {start:"13:00", end:"14:00", ly:"君島大空 合奏形態"},
+      {start:"15:00", end:"16:00", ly:"STUTS (Band Set)"},
+      {start:"17:00", end:"18:00", ly:"JAMES BLAKE"},
+      {start:"19:00", end:"20:10", ly:"山下達郎"},
+      {start:"21:10", end:"22:40", ly:"VULFPECK"},
+    ],
+    WHITE: [
+      {start:"12:10", end:"13:00", ly:"FERMIN MUGURUZA"},
+      {start:"14:00", end:"15:00", ly:"BALMING TIGER"},
+      {start:"15:50", end:"16:50", ly:"FAYE WEBSTER"},
+      {start:"17:40", end:"18:40", ly:"JJJ"},
+      {start:"19:50", end:"20:50", ly:"BARRY CAN'T SWIM"},
+      {start:"22:00", end:"23:30", ly:"FOUR TET"},
+    ],
+    RED: [
+      {start:"10:20", end:"11:00", ly:"downy"},
+      {start:"11:30", end:"12:10", ly:"jo0ji"},
+      {start:"12:40", end:"13:30", ly:"離婚伝説"},
+      {start:"14:00", end:"15:00", ly:"YHWH NAILGUN"},
+      {start:"16:00", end:"17:00", ly:"NEWDAD"},
+      {start:"18:00", end:"19:00", ly:"GINGER ROOT"},
+      {start:"20:10", end:"21:10", ly:"サンボマスター"},
+      {start:"23:30", end:"24:30", ly:"CONFIDENCE MAN"},
+    ],
+    HEAVEN: [
+      {start:"11:30", end:"12:20", ly:"mei ehara"},
+      {start:"13:20", end:"14:20", ly:"THE PANTURAS"},
+      {start:"15:10", end:"16:10", ly:"踊ってばかりの国"},
+      {start:"17:10", end:"18:10", ly:"THE SKA FLAMES"},
+      {start:"19:00", end:"20:10", ly:"AFRICAN HEAD CHARGE"},
+      {start:"21:00", end:"22:30", ly:"EGO-WRAPPIN'"},
+    ],
+    SUNDAY: [
+      {start:"22:00", end:"23:00", ly:"(2025 GAN-BAN: AAAMYYY)"},
+      {start:"23:30", end:"24:30", ly:"(2025 GAN-BAN: TYO GQOM)"},
+      {start:"25:00", end:"26:00", ly:"(2025 GAN-BAN: NTsKi)"},
+      {start:"26:30", end:"27:30", ly:"(2025 GAN-BAN: Night Tempo)"},
+      {start:"28:00", end:"29:00", ly:"(2025 GAN-BAN: Seiho)"},
+    ],
+  },
+  day3: {
+    GREEN: [
+      {start:"11:00", end:"12:00", ly:"Red Hot Chilli Pipers"},
+      {start:"13:00", end:"14:00", ly:"森山直太朗"},
+      {start:"15:00", end:"16:00", ly:"Creepy Nuts"},
+      {start:"17:00", end:"18:00", ly:"LITTLE SIMZ"},
+      {start:"19:00", end:"20:10", ly:"RADWIMPS"},
+      {start:"21:10", end:"22:40", ly:"VAMPIRE WEEKEND"},
+    ],
+    WHITE: [
+      {start:"12:30", end:"13:20", ly:"MONO NO AWARE"},
+      {start:"14:20", end:"15:20", ly:"SILICA GEL"},
+      {start:"16:20", end:"17:20", ly:"佐野元春 & THE COYOTE BAND"},
+      {start:"18:20", end:"19:20", ly:"ROYEL OTIS"},
+      {start:"20:10", end:"21:10", ly:"羊文学"},
+      {start:"22:20", end:"23:35", ly:"HAIM"},
+    ],
+    RED: [
+      {start:"10:20", end:"11:00", ly:"DYGL"},
+      {start:"11:30", end:"12:10", ly:"Tjiros"},
+      {start:"12:40", end:"13:30", ly:"MEI SEMONES"},
+      {start:"14:00", end:"15:00", ly:"まらしぃ"},
+      {start:"16:00", end:"17:00", ly:"ENGLISH TEACHER"},
+      {start:"18:00", end:"19:00", ly:"カネコアヤノ"},
+      {start:"20:10", end:"21:10", ly:"THE HIVES"},
+    ],
+    HEAVEN: [
+      {start:"11:30", end:"12:20", ly:"She Her Her Hers"},
+      {start:"13:20", end:"14:20", ly:"吾妻光良 & The Swinging Boppers"},
+      {start:"15:10", end:"16:10", ly:"GRACE BOWERS & THE HODGE PODGE"},
+      {start:"17:10", end:"18:10", ly:"JAKE SHIMABUKURO BAND"},
+      {start:"19:00", end:"20:10", ly:"ROBERT RANDOLPH"},
+      {start:"21:00", end:"22:30", ly:"GALACTIC"},
+    ],
+    SUNDAY: [
+      {start:"22:00", end:"23:00", ly:"(2025 GAN-BAN: PAS TASTA)"},
+      {start:"23:30", end:"24:30", ly:"(2025 GAN-BAN: TREKKIE TRAX CREW)"},
+      {start:"25:00", end:"26:00", ly:"(2025 GAN-BAN: E.O.U)"},
+      {start:"26:30", end:"27:30", ly:"(2025 GAN-BAN: TOREI)"},
+      {start:"28:00", end:"29:00", ly:"(2025 後夜祭DJ枠)"},
+    ],
+  },
+};
+
+/* =========================================================
+   2026 発表アーティスト (発表順)
+========================================================= */
+const ARTISTS_2026 = {
+  day1: {
+    GREEN: ["The xx","Hi-STANDARD","TURNSTILE","My Hair is Bad","LOYLE CARNER"],
+    WHITE: ["ASIAN KUNG-FU GENERATION","ARLO PARKS","KOTORI","SON ROMPE PERA","Yo-Sea","TORO Y MOI"],
+    RED:   ["HYUKOH","SNAIL MAIL","SORRY","TESTSET","w.o.d.","テレビ大陸音頭"],
+    HEAVEN:["LETTUCE","ALTIN GÜN","CHAPPO","奇妙礼太郎BAND","OGRE YOU ASSHOLE","TINARIWEN"],
+    SUNDAY:["Wata Igarashi","maya ongaku"],
+  },
+  day2: {
+    GREEN: ["KHRUANGBIN","Fujii Kaze","BASEMENT JAXX","Bialystocks","IO","Trueno","ROUTE 17 Rock'n'Roll ORCHESTRA"],
+    WHITE: ["TOMORA","XG","BOHEMIAN BETYARS","Kroi","Riddim Saunter","SIX LOUNGE","JOEY VALENCE & BRAE"],
+    RED:   ["サニーデイ・サービス","THE BETHS","ブランデー戦記","cero","QUADECA","THURSTON MOORE GROUP"],
+    HEAVEN:["BADBADNOTGOOD","KOKOROKO","LA LOM","OAU","柴田聡子 (BAND SET)","YUUF"],
+    SUNDAY:["唾奇","KELLY LEE OWENS (DJ)","Soichi Terada"],
+  },
+  day3: {
+    GREEN: ["MASSIVE ATTACK","平沢進+会人","MOGWAI","DONAVON FRANKENREITER","平井大","KNEECAP"],
+    WHITE: ["MITSKI","Tempalay","GRAPEVINE","礼賛","SOFIA ISELLA","GEORDIE GREEP"],
+    RED:   ["AMERICAN FOOTBALL","Aooo","浅井健一","the cabs","FRIKO","THE LEMON TWIGS","ANGINE DE POITRINE"],
+    HEAVEN:["never young beach","THE BREAKS","GOGO PENGUIN","んoon","PLINI","TĀL FRY"],
+    SUNDAY:["KIRARA","LAUSBUB","ICHIRO YAMAGUCHI","TAKKYU ISHINO"],
+  },
+};
+
+/* =========================================================
+   予測ロジック
+========================================================= */
+function predictSlots(day, stage){
+  const tmpl = SLOTS_2025[day][stage] || [];
+  const artists = (ARTISTS_2026[day] && ARTISTS_2026[day][stage]) || [];
+  const out = tmpl.map(s => ({...s, name:null, tba:true}));
+  const indices = out.map((_,i)=>i).sort((a,b) => toMin(out[b].start) - toMin(out[a].start));
+  artists.forEach((a, i) => {
+    if (i >= indices.length){
+      const lastIdx = indices[indices.length-1];
+      out[lastIdx].overflow = out[lastIdx].overflow || [];
+      out[lastIdx].overflow.push(a);
+      return;
+    }
+    const idx = indices[i];
+    out[idx].name = a;
+    out[idx].tba = false;
+  });
+  return out;
+}
+
+/* =========================================================
+   State
+========================================================= */
+const LS_KEY = "fr2026_my_tt_v2";
+let myList = loadMyList();
+let currentDay = "day1";
+let currentView = "predict";
+let currentStage = "all";
+let myMode = "timetable";
+
+function loadMyList(){
+  try { const r = localStorage.getItem(LS_KEY); return r ? JSON.parse(r) : []; }
+  catch(e){ return []; }
+}
+function saveMyList(){ localStorage.setItem(LS_KEY, JSON.stringify(myList)); }
+function slotKey(day, stage, slot){
+  return `${day}|${stage}|${slot.start}|${slot.name||slot.ly}`;
+}
+function isAdded(day, stage, slot){
+  const id = slotKey(day, stage, slot);
+  return myList.some(m => m.id === id);
+}
+function toggleSlot(day, stage, slot){
+  if (slot.tba) return;
+  const id = slotKey(day, stage, slot);
+  const i = myList.findIndex(m => m.id === id);
+  if (i >= 0){ myList.splice(i,1); }
+  else {
+    myList.push({ id, day, stage, start: slot.start, end: slot.end, name: slot.name });
+  }
+  saveMyList();
+  renderPredict();
+  renderMy();
+}
+
+/* =========================================================
+   Time helpers
+========================================================= */
+const TIME_START = "10:00";
+const TIME_END   = "29:30";
+const STEP_MIN   = 10;
+function toMin(t){ const [h,m] = t.split(":").map(Number); return h*60+m; }
+function fromMin(min){
+  const h = Math.floor(min/60), m = min%60;
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+}
+function displayTime(t){ return t; }
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+/* =========================================================
+   Predict grid rendering
+========================================================= */
+function renderPredict(){
+  const grid = document.getElementById("ttGrid");
+  const startMin = toMin(TIME_START);
+  const endMin   = toMin(TIME_END);
+  const rows     = (endMin - startMin) / STEP_MIN;
+  const visibleStages = currentStage === "all" ? STAGES : STAGES.filter(s => s.key === currentStage);
+  const isMobile = window.matchMedia("(max-width:640px)").matches;
+  const stageColMin = currentStage === "all"
+    ? (isMobile ? 110 : 170)
+    : (isMobile ? 240 : 360);
+  const timeColW = isMobile ? 44 : 56;
+  grid.style.gridTemplateColumns = `${timeColW}px repeat(${visibleStages.length}, minmax(${stageColMin}px,1fr))`;
+  grid.style.gridTemplateRows = `34px repeat(${rows}, ${isMobile?12:13}px)`;
+  grid.style.minWidth = (timeColW + visibleStages.length * stageColMin + 24) + "px";
+  grid.innerHTML = "";
+
+  // headers
+  const corner = document.createElement("div");
+  corner.className = "tt-stage-head";
+  corner.textContent = "TIME";
+  corner.style.gridColumn = "1"; corner.style.gridRow = "1";
+  grid.appendChild(corner);
+
+  visibleStages.forEach((st, idx) => {
+    const h = document.createElement("div");
+    h.className = "tt-stage-head";
+    h.textContent = st.label;
+    h.style.gridColumn = String(idx+2); h.style.gridRow = "1";
+    grid.appendChild(h);
+  });
+
+  // time labels + empty cells
+  for (let r=0; r<rows; r++){
+    const min = startMin + r*STEP_MIN;
+    if (min % 60 === 0){
+      const tl = document.createElement("div");
+      tl.className = "tt-time-head";
+      tl.textContent = fromMin(min);
+      tl.style.gridColumn = "1"; tl.style.gridRow = String(r+2);
+      grid.appendChild(tl);
+    }
+    visibleStages.forEach((st, idx) => {
+      const c = document.createElement("div");
+      c.className = "tt-cell";
+      c.style.gridColumn = String(idx+2); c.style.gridRow = String(r+2);
+      grid.appendChild(c);
+    });
+  }
+
+  // slots
+  visibleStages.forEach((st, stIdx) => {
+    const slots = predictSlots(currentDay, st.key);
+    slots.forEach(s => {
+      const startRow = (toMin(s.start) - startMin)/STEP_MIN + 2;
+      const endRow   = (toMin(s.end)   - startMin)/STEP_MIN + 2;
+      const div = document.createElement("div");
+      const cls = ["tt-slot", `s-${st.key}`];
+      if (s.tba) cls.push("tba");
+      if (!s.tba && isAdded(currentDay, st.key, s)) cls.push("added");
+      div.className = cls.join(" ");
+      div.style.gridColumn = String(stIdx+2);
+      div.style.gridRow = `${startRow} / ${endRow}`;
+      let html = "";
+      if (s.tba){
+        html = `<div class="name">TBA</div>
+                <div class="time">${displayTime(s.start)} - ${displayTime(s.end)}</div>
+                <div class="ly">昨年: ${escapeHtml(s.ly)}</div>`;
+      } else {
+        html = `<div class="name">${escapeHtml(s.name)}</div>
+                <div class="time">${displayTime(s.start)} - ${displayTime(s.end)}</div>
+                <div class="ly">昨年: ${escapeHtml(s.ly)}</div>`;
+        if (s.overflow && s.overflow.length){
+          html += `<div class="ly">+ ${s.overflow.map(escapeHtml).join(", ")}</div>`;
+        }
+      }
+      div.innerHTML = html;
+      if (!s.tba){
+        div.title = isAdded(currentDay, st.key, s) ? "クリックで削除" : "クリックでマイタイムテーブルに追加";
+        div.addEventListener("click", () => toggleSlot(currentDay, st.key, s));
+      } else {
+        div.title = `昨年の同枠: ${s.ly}`;
+      }
+      grid.appendChild(div);
+    });
+  });
+}
+
+/* =========================================================
+   My timetable rendering
+========================================================= */
+function renderMy(){
+  const root = document.getElementById("myContent");
+  root.innerHTML = "";
+
+  if (myList.length === 0){
+    const e = document.createElement("div");
+    e.className = "my-empty";
+    e.textContent = "予測タイムテーブルでアーティスト枠をタップして追加してください。";
+    root.appendChild(e);
+    return;
+  }
+
+  if (myMode === "timetable") renderMyTimetable(root);
+  else renderMyList(root);
+}
+
+/* 連結成分(クラスタ)単位でレーン割当てし、重なりは横分割する */
+function gcd(a,b){ return b===0 ? a : gcd(b, a%b); }
+function lcm(a,b){ return a*b/gcd(a,b); }
+function layoutDayItems(items){
+  const n = items.length;
+  if (n === 0) return { maxLanes:1, lcm:1 };
+  const overlaps = (a,b) => !(toMin(a.end) <= toMin(b.start) || toMin(a.start) >= toMin(b.end));
+  // union-find でクラスタ分け
+  const parent = Array.from({length:n}, (_,i)=>i);
+  const find = i => parent[i]===i ? i : (parent[i]=find(parent[i]));
+  const unite = (i,j) => { const ri=find(i), rj=find(j); if (ri!==rj) parent[ri]=rj; };
+  for (let i=0; i<n; i++){
+    for (let j=i+1; j<n; j++){
+      if (overlaps(items[i], items[j])) unite(i,j);
+    }
+  }
+  const buckets = {};
+  items.forEach((it, i) => {
+    const r = find(i);
+    (buckets[r] = buckets[r] || []).push(it);
+  });
+  const clusterMaxes = [];
+  Object.values(buckets).forEach(cluster => {
+    const sorted = [...cluster].sort((a,b) => toMin(a.start) - toMin(b.start));
+    const lanes = []; // lanes[k] = 最後にlane kへ入れたitemのend(分)
+    sorted.forEach(it => {
+      const s = toMin(it.start), e = toMin(it.end);
+      let lane = -1;
+      for (let k=0; k<lanes.length; k++){
+        if (lanes[k] <= s){ lane = k; break; }
+      }
+      if (lane === -1){ lane = lanes.length; lanes.push(0); }
+      lanes[lane] = e;
+      it._lane = lane;
+    });
+    cluster.forEach(it => it._clusterMax = lanes.length);
+    clusterMaxes.push(lanes.length);
+  });
+  const subDiv = clusterMaxes.reduce((a,b)=>lcm(a,b), 1);
+  return { maxLanes: Math.max(...clusterMaxes), lcm: subDiv };
+}
+
+function renderMyTimetable(root){
+  const isMobile = window.matchMedia("(max-width:640px)").matches;
+  const dayMeta = {
+    day1: {label:"DAY 1", sub:"7/24 FRI"},
+    day2: {label:"DAY 2", sub:"7/25 SAT"},
+    day3: {label:"DAY 3", sub:"7/26 SUN"},
+  }[currentDay];
+
+  const items = myList
+    .filter(m => m.day === currentDay)
+    .sort((a,b) => toMin(a.start) - toMin(b.start));
+
+  if (items.length === 0){
+    const e = document.createElement("div");
+    e.className = "my-empty";
+    e.textContent = `${dayMeta.label} (${dayMeta.sub}) はまだ追加されていません。`;
+    root.appendChild(e);
+    return;
+  }
+
+  // クラスタリング + レーン割当て
+  const { lcm: subDiv } = layoutDayItems(items);
+
+  // 表示時間レンジ(自動フィット)
+  const mins = items.map(m => toMin(m.start));
+  const maxs = items.map(m => toMin(m.end));
+  const rangeStart = Math.max(toMin("10:00"), Math.floor((Math.min(...mins) - 30) / 60) * 60);
+  const rangeEnd   = Math.min(toMin("29:30"), Math.ceil((Math.max(...maxs) + 30) / 60) * 60);
+  const rows = (rangeEnd - rangeStart) / STEP_MIN;
+
+  const wrap = document.createElement("div");
+  wrap.className = "my-tt-wrap";
+  const grid = document.createElement("div");
+  grid.className = "my-tt-grid";
+
+  const timeColW = isMobile ? 44 : 56;
+  const dayColMin = isMobile ? 240 : 480;
+  const subColMin = Math.max(60, Math.floor(dayColMin / subDiv));
+  grid.style.gridTemplateColumns = `${timeColW}px repeat(${subDiv}, minmax(${subColMin}px,1fr))`;
+  grid.style.gridTemplateRows = `44px repeat(${rows}, ${isMobile?14:16}px)`;
+  grid.style.minWidth = (timeColW + subDiv * subColMin + 16) + "px";
+  grid.style.gap = "3px";
+
+  // header
+  const corner = document.createElement("div");
+  corner.className = "my-tt-head";
+  corner.textContent = "TIME";
+  corner.style.gridColumn = "1"; corner.style.gridRow = "1";
+  grid.appendChild(corner);
+  const dh = document.createElement("div");
+  dh.className = "my-tt-head";
+  dh.innerHTML = `${dayMeta.label}<span class="sub">${dayMeta.sub}</span>`;
+  dh.style.gridColumn = `2 / span ${subDiv}`;
+  dh.style.gridRow = "1";
+  grid.appendChild(dh);
+
+  // time labels + 背景セル
+  for (let r=0; r<rows; r++){
+    const min = rangeStart + r*STEP_MIN;
+    if (min % 60 === 0){
+      const tl = document.createElement("div");
+      tl.className = "my-tt-time";
+      tl.textContent = fromMin(min);
+      tl.style.gridColumn = "1"; tl.style.gridRow = String(r+2);
+      grid.appendChild(tl);
+    }
+    const c = document.createElement("div");
+    c.className = "my-tt-cell";
+    c.style.gridColumn = `2 / span ${subDiv}`;
+    c.style.gridRow = String(r+2);
+    grid.appendChild(c);
+  }
+
+  // items: lane で横分割
+  items.forEach(m => {
+    const span = subDiv / m._clusterMax;
+    const colStart = 2 + m._lane * span;
+    const startRow = (toMin(m.start) - rangeStart)/STEP_MIN + 2;
+    const endRow   = (toMin(m.end)   - rangeStart)/STEP_MIN + 2;
+    const div = document.createElement("div");
+    div.className = `tt-slot s-${m.stage}`;
+    div.style.gridColumn = `${colStart} / span ${span}`;
+    div.style.gridRow = `${startRow} / ${endRow}`;
+    div.innerHTML = `
+      <div class="name">${escapeHtml(m.name)}</div>
+      <div class="time">${displayTime(m.start)} - ${displayTime(m.end)}</div>
+      <div class="ly">${STAGES.find(x=>x.key===m.stage)?.label || m.stage}</div>
+    `;
+    div.title = "クリックで削除";
+    div.addEventListener("click", () => {
+      const i = myList.findIndex(x => x.id === m.id);
+      if (i>=0){ myList.splice(i,1); saveMyList(); renderPredict(); renderMy(); }
+    });
+    grid.appendChild(div);
+  });
+
+  wrap.appendChild(grid);
+  root.appendChild(wrap);
+}
+
+function renderMyList(root){
+  const days = [
+    {key:"day1", label:"DAY 1 — 7/24 (FRI)"},
+    {key:"day2", label:"DAY 2 — 7/25 (SAT)"},
+    {key:"day3", label:"DAY 3 — 7/26 (SUN)"},
+  ];
+  days.forEach(d => {
+    const wrap = document.createElement("div");
+    wrap.className = "my-day";
+    wrap.innerHTML = `<h3>${d.label}</h3>`;
+    const list = myList
+      .filter(m => m.day === d.key)
+      .sort((a,b) => toMin(a.start) - toMin(b.start));
+    if (list.length === 0){
+      const e = document.createElement("div");
+      e.className = "my-empty";
+      e.textContent = "(なし)";
+      wrap.appendChild(e);
+    } else {
+      const ul = document.createElement("div");
+      ul.className = "my-list";
+      list.forEach((m, idx) => {
+        const conflict = list.some((o, oIdx) =>
+          oIdx !== idx &&
+          !(toMin(o.end) <= toMin(m.start) || toMin(o.start) >= toMin(m.end))
+        );
+        const stageColor = STAGE_COLORS[m.stage] || "#888";
+        const stageLabel = STAGES.find(x => x.key === m.stage)?.label || m.stage;
+        const item = document.createElement("div");
+        item.className = "my-item" + (conflict ? " conflict" : "");
+        item.innerHTML = `
+          <div class="meta">
+            <div class="a-name">
+              <span class="stage-dot" style="background:${stageColor}"></span>
+              ${escapeHtml(m.name)}
+              ${conflict ? '<span class="conflict-tag">時間重複</span>' : ''}
+            </div>
+            <div class="a-info">${displayTime(m.start)} - ${displayTime(m.end)} @ ${stageLabel}</div>
+          </div>
+          <button class="remove" data-id="${escapeHtml(m.id)}">削除</button>
+        `;
+        ul.appendChild(item);
+      });
+      wrap.appendChild(ul);
+    }
+    root.appendChild(wrap);
+  });
+
+  root.querySelectorAll(".remove").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      const i = myList.findIndex(m => m.id === id);
+      if (i>=0){ myList.splice(i,1); saveMyList(); renderPredict(); renderMy(); }
+    });
+  });
+}
+
+/* =========================================================
+   Tabs & buttons
+========================================================= */
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    currentView = t.dataset.view;
+    document.getElementById("view-predict").classList.toggle("active", currentView==="predict");
+    document.getElementById("view-my").classList.toggle("active", currentView==="my");
+    document.getElementById("dayTabs").style.display = ""; // 両画面で表示
+    document.getElementById("stageTabs").style.display = currentView==="predict" ? "" : "none";
+  });
+});
+document.querySelectorAll(".day-tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".day-tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    currentDay = t.dataset.day;
+    renderPredict();
+    renderMy();
+  });
+});
+document.querySelectorAll(".stage-tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".stage-tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    currentStage = t.dataset.stage;
+    renderPredict();
+  });
+});
+document.querySelectorAll(".mode-toggle button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".mode-toggle button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    myMode = b.dataset.mode;
+    renderMy();
+  });
+});
+document.getElementById("clearBtn").addEventListener("click", () => {
+  if (myList.length === 0) return;
+  if (confirm("マイタイムテーブルをすべて削除しますか？")){
+    myList = []; saveMyList(); renderPredict(); renderMy();
+  }
+});
+document.getElementById("exportBtn").addEventListener("click", async () => {
+  const target = document.getElementById("myCapture");
+  const btn = document.getElementById("exportBtn");
+  btn.disabled = true; btn.textContent = "生成中...";
+  try {
+    const canvas = await html2canvas(target, {
+      backgroundColor: getComputedStyle(document.body).backgroundColor,
+      scale: 2, useCORS: true,
+      windowWidth: Math.max(target.scrollWidth, target.clientWidth),
+    });
+    const link = document.createElement("a");
+    link.download = `my_fujirock_2026_${ymdNow()}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch(e){
+    alert("画像生成でエラーが発生しました: " + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = "画像保存 (PNG)";
+  }
+});
+function ymdNow(){
+  const d = new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}_${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}`;
+}
+
+window.addEventListener("resize", () => {
+  renderPredict();
+  if (currentView === "my") renderMy();
+});
+
+renderPredict();
+renderMy();
+</script>
+</body>
+</html>
