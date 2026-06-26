@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FUJI ROCK 2026 タイムテーブル予測 & マイタイムテーブル</title>
+<title>FUJI ROCK 2026 タイムテーブル & マイタイムテーブル</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root{
@@ -15,11 +15,6 @@
     --muted:#8aa89a;
     --accent:#ffd23f;
     --accent2:#ff5b3d;
-    --green:#3fa66a;
-    --white-s:#7a8a82;
-    --red-m:#c34a3a;
-    --heaven:#7a5cd6;
-    --sunday:#e08a2b;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;-webkit-text-size-adjust:100%}
@@ -44,34 +39,16 @@
   .tab.active{background:var(--accent);color:#1a1a1a;border-color:var(--accent);font-weight:700}
   .filter-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
   .filter-label{color:var(--muted);font-size:11px;margin-right:2px}
-  .day-tab,.stage-tab{
+  .day-tab{
     background:transparent;color:var(--muted);
     border:1px solid var(--line);
     padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;
   }
   .day-tab.active{background:var(--accent2);color:#fff;border-color:var(--accent2)}
-  .stage-tab.active{background:var(--panel2);color:var(--text);border-color:var(--muted)}
-  .stage-tab.active[data-stage="GREEN"]{background:var(--green);color:#fff;border-color:var(--green)}
-  .stage-tab.active[data-stage="WHITE"]{background:var(--white-s);color:#fff;border-color:var(--white-s)}
-  .stage-tab.active[data-stage="RED"]{background:var(--red-m);color:#fff;border-color:var(--red-m)}
-  .stage-tab.active[data-stage="HEAVEN"]{background:var(--heaven);color:#fff;border-color:var(--heaven)}
-  .stage-tab.active[data-stage="SUNDAY"]{background:var(--sunday);color:#fff;border-color:var(--sunday)}
 
   main{padding:12px}
   .view{display:none}
   .view.active{display:block}
-
-  .notice{
-    background:var(--panel);border:1px dashed var(--line);
-    border-radius:10px;padding:10px 14px;margin-bottom:12px;
-    color:var(--muted);font-size:12px;line-height:1.7;
-  }
-  .notice b{color:var(--accent)}
-  .notice details{margin-top:6px}
-  .notice summary{cursor:pointer;color:var(--text);font-size:12px}
-  .notice ul{margin:6px 0 0 18px;padding:0}
-  .notice a{color:var(--accent);text-decoration:none}
-  .notice a:hover{text-decoration:underline}
 
   .scroll-hint{
     color:var(--muted);font-size:10px;text-align:right;
@@ -101,7 +78,7 @@
   }
   .tt-cell{background:var(--panel2);border-radius:3px;min-height:12px}
   .tt-slot{
-    border-radius:6px;padding:5px 6px;font-size:11px;line-height:1.25;color:#fff;
+    border-radius:6px;padding:4px 6px;font-size:11px;line-height:1.2;color:#fff;
     cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.25);overflow:hidden;
     display:flex;flex-direction:column;justify-content:center;
     transition:transform .1s, filter .15s;
@@ -111,18 +88,6 @@
   .tt-slot .name{font-weight:700;font-size:12px}
   .tt-slot .time{font-size:9px;opacity:.85;margin-top:2px}
   .tt-slot .ly{font-size:9px;opacity:.7;margin-top:1px;font-style:italic}
-  .tt-slot.s-GREEN{background:var(--green)}
-  .tt-slot.s-WHITE{background:var(--white-s)}
-  .tt-slot.s-RED{background:var(--red-m)}
-  .tt-slot.s-HEAVEN{background:var(--heaven)}
-  .tt-slot.s-SUNDAY{background:var(--sunday)}
-  .tt-slot.tba{background:#3a4d44;color:#b6c8be;cursor:default}
-  .tt-slot.tba:hover{transform:none;filter:none}
-  .tt-slot.tba .name{font-weight:600;opacity:.85}
-
-  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;font-size:10px;color:var(--muted)}
-  .legend .lg{display:flex;align-items:center;gap:4px}
-  .legend .sw{width:12px;height:12px;border-radius:3px}
 
   /* My timetable */
   .my-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
@@ -168,7 +133,7 @@
   }
   .remove:hover{background:#3a1f1f;color:#fff;border-color:#7a2a22}
   .conflict{background:#3a1f1f !important;border-color:var(--red-m) !important}
-  .conflict-tag{background:var(--red-m);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px}
+  .conflict-tag{background:#c34a3a;color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;margin-left:6px}
 
   /* My timetable view: 3日カラム x 時間軸 */
   .my-tt-wrap{
@@ -209,7 +174,6 @@
     .title h1{font-size:17px}
     .title .sub{font-size:10px}
     main{padding:10px 8px}
-    .notice{font-size:11px;padding:8px 10px}
     .tt-slot .name{font-size:11px}
     .tt-slot .time, .tt-slot .ly{font-size:9px}
     .btn{font-size:12px;padding:8px 12px}
@@ -222,11 +186,11 @@
 <body>
 <header>
   <div class="title">
-    <h1>FUJI ROCK <span class="accent">2026</span> タイムテーブル予測</h1>
+    <h1>FUJI ROCK <span class="accent">2026</span> タイムテーブル</h1>
     <span class="sub">2026.7.24(FRI) - 7.26(SUN) @ NAEBA</span>
   </div>
   <div class="tabs">
-    <button class="tab active" data-view="predict">予測タイムテーブル</button>
+    <button class="tab active" data-view="predict">タイムテーブル</button>
     <button class="tab" data-view="my">マイタイムテーブル</button>
   </div>
   <div class="filter-row" id="dayTabs">
@@ -238,7 +202,7 @@
 </header>
 
 <main>
-  <!-- 予測タイムテーブル -->
+  <!-- タイムテーブル -->
   <section class="view active" id="view-predict">
     <div class="scroll-hint">← スワイプで横スクロール →</div>
     <div class="tt-wrap">
@@ -271,14 +235,12 @@
   <details class="footer-notes">
     <summary>ソース / 注意事項</summary>
     <ul>
-      <li>当てはめロジック: 昨年(2025)の各ステージの枠を、2026年に同じ曜日の枠へ流用。発表済アーティストを(出演日 × ステージ)で発表順に並べ、早く発表された人ほど遅い時間帯の枠に配置(発表順 ≒ ビリング順 と仮定)。足りない枠は TBA + 昨年の同枠出演者を併記</li>
-      <li>2026ラインナップ: <a href="https://fujirockfestival.com/artist/index" target="_blank">公式 LINEUP</a> + 第1弾日付別(<a href="https://qetic.jp/music/fuji-rock-2026_linup-v01/472822/" target="_blank">Qetic</a>) + 第2弾(<a href="https://fujirockfestival.com/news/detail/2f69f4584ad9e36" target="_blank">公式</a>) + 第3弾(<a href="https://www.wwdjapan.com/articles/2396953" target="_blank">WWD</a>) + 第4弾(<a href="https://nme-jp.com/news/168146/" target="_blank">NME</a>)</li>
-      <li>2025タイムテーブル: <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-1/" target="_blank">Day1</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-2/" target="_blank">Day2</a> / <a href="https://festtimetable.com/en-US/events/fujirockfestival-2025/day-3/" target="_blank">Day3</a></li>
-      <li>SUNDAY SESSIONは2026新設のため2025深夜枠(GAN-BAN等)を参考に時間合成</li>
-      <li>ROUTE 17 Rock'n'Roll ORCHESTRAは出演日未発表のため7/25 GREENに仮置き</li>
+      <li>出演者・時間は公式発表タイムテーブルに基づく: <a href="https://www.fujirockfestival.com/artist/timetable/24" target="_blank">7/24</a> / <a href="https://www.fujirockfestival.com/artist/timetable/25" target="_blank">7/25</a> / <a href="https://www.fujirockfestival.com/artist/timetable/26" target="_blank">7/26</a>（<a href="https://www.fujirockfestival.com/" target="_blank">FUJI ROCK FESTIVAL 公式</a>）</li>
+      <li>深夜帯は翌日扱い（24:00以降＝翌0:00以降）として表示。出演順・時間は変更になる場合があります。最新情報は必ず公式でご確認ください。</li>
+      <li>スロットをタップすると「マイタイムテーブル」に追加され、画像として保存できます。</li>
     </ul>
   </details>
-  <div class="copy">Fan-made prediction tool. Not affiliated with SMASH / FUJI ROCK FESTIVAL.</div>
+  <div class="copy">Fan-made timetable viewer. Not affiliated with SMASH / FUJI ROCK FESTIVAL.</div>
 </footer>
 
 <script>
@@ -286,203 +248,386 @@
    STAGES
 ========================================================= */
 const STAGES = [
-  { key:"GREEN",  label:"GREEN STAGE" },
-  { key:"WHITE",  label:"WHITE STAGE" },
-  { key:"RED",    label:"RED MARQUEE" },
-  { key:"HEAVEN", label:"FIELD OF HEAVEN" },
-  { key:"SUNDAY", label:"SUNDAY SESSION" },
+  { key:"GREEN",   label:"GREEN STAGE" },
+  { key:"WHITE",   label:"WHITE STAGE" },
+  { key:"RED",     label:"RED MARQUEE" },
+  { key:"HEAVEN",  label:"FIELD OF HEAVEN" },
+  { key:"ECHO",    label:"ECHO" },
+  { key:"AVALON",  label:"AVALON" },
+  { key:"CRYSTAL", label:"CRYSTAL" },
+  { key:"PALACE",  label:"PALACE" },
+  { key:"ROOKIE",  label:"ROOKIE" },
+  { key:"NAEBA",   label:"NAEBA" },
+  { key:"PYRAMID", label:"PYRAMID" },
+  { key:"GANBAN",  label:"GAN-BAN" },
+  { key:"BLUE",    label:"BLUE GARDEN" },
 ];
 const STAGE_COLORS = {
-  GREEN:"#3fa66a", WHITE:"#7a8a82", RED:"#c34a3a",
-  HEAVEN:"#7a5cd6", SUNDAY:"#e08a2b"
+  GREEN:"#3fa66a", WHITE:"#7a8a82", RED:"#c34a3a", HEAVEN:"#7a5cd6",
+  ECHO:"#2f9fb3", AVALON:"#4a7fb5", CRYSTAL:"#50b8d0", PALACE:"#b06fb5",
+  ROOKIE:"#8a9a3f", NAEBA:"#c98a3a", PYRAMID:"#d4a13f", GANBAN:"#5b6bd6",
+  BLUE:"#3f6fa6"
 };
 
 /* =========================================================
-   2025 タイムテーブル(枠テンプレート)
+   2026 公式タイムテーブル
+   （深夜帯は 24:00 以降の表記＝翌0:00以降）
 ========================================================= */
-const SLOTS_2025 = {
+const TIMETABLE_2026 = {
   day1: {
     GREEN: [
-      {start:"11:00", end:"12:00", ly:"US"},
-      {start:"13:00", end:"14:00", ly:"池畑潤二 他12名"},
-      {start:"15:00", end:"16:00", ly:"BRAHMAN"},
-      {start:"17:00", end:"18:00", ly:"HYUKOH × Sunset Rollercoaster"},
-      {start:"19:00", end:"20:10", ly:"Vaundy"},
-      {start:"21:10", end:"22:40", ly:"FRED AGAIN.."},
+      {start:"11:00", end:"12:00", name:"ROUTE 17 Rock'n'Roll ORCHESTRA"},
+      {start:"13:00", end:"14:00", name:"My Hair is Bad"},
+      {start:"15:00", end:"16:00", name:"LOYLE CARNER"},
+      {start:"17:00", end:"18:00", name:"TURNSTILE"},
+      {start:"19:00", end:"20:10", name:"Hi-STANDARD"},
+      {start:"21:25", end:"22:40", name:"The xx"},
     ],
     WHITE: [
-      {start:"12:10", end:"13:00", ly:"おとぼけビ〜バ〜"},
-      {start:"14:00", end:"14:50", ly:"ECCA VANDAL"},
-      {start:"15:50", end:"16:50", ly:"MDOU MOCTAR"},
-      {start:"17:40", end:"18:40", ly:"MIYAVI"},
-      {start:"19:40", end:"20:40", ly:"OK GO"},
-      {start:"22:00", end:"23:30", ly:"Suchmos"},
+      {start:"11:30", end:"12:20", name:"KOTORI"},
+      {start:"13:00", end:"13:50", name:"SON ROMPE PERA"},
+      {start:"14:40", end:"15:40", name:"Yo-Sea"},
+      {start:"16:40", end:"17:40", name:"TORO Y MOI"},
+      {start:"18:40", end:"19:40", name:"ARLO PARKS"},
+      {start:"20:40", end:"22:10", name:"ASIAN KUNG-FU GENERATION"},
     ],
     RED: [
-      {start:"11:30", end:"12:10", ly:"kurayamisaka"},
-      {start:"12:40", end:"13:30", ly:"TOMOO"},
-      {start:"14:00", end:"15:00", ly:"MARCIN"},
-      {start:"16:00", end:"17:00", ly:"青葉市子"},
-      {start:"18:00", end:"19:00", ly:"PERFUME GENIUS"},
-      {start:"20:10", end:"21:10", ly:"TYCHO"},
-      {start:"23:30", end:"24:30", ly:"坂本慎太郎"},
+      {start:"11:10", end:"11:50", name:"テレビ大陸音頭"},
+      {start:"12:20", end:"13:10", name:"w.o.d."},
+      {start:"14:00", end:"15:00", name:"SORRY"},
+      {start:"16:00", end:"17:00", name:"TESTSET"},
+      {start:"18:00", end:"19:00", name:"SNAIL MAIL"},
+      {start:"20:10", end:"21:10", name:"HYUKOH"},
+      {start:"23:30", end:"24:20", name:"maya ongaku"},
+      {start:"24:30", end:"26:00", name:"TORO Y MOI (DJ)"},
+      {start:"26:00", end:"27:30", name:"salute"},
+      {start:"27:30", end:"29:00", name:"Wata Igarashi"},
     ],
     HEAVEN: [
-      {start:"11:30", end:"12:20", ly:"トリプルファイヤー"},
-      {start:"13:20", end:"14:20", ly:"KIRINJI"},
-      {start:"15:10", end:"16:10", ly:"ANSWER TO REMEMBER"},
-      {start:"17:10", end:"18:10", ly:"PARLOR GREENS"},
-      {start:"19:00", end:"20:10", ly:"MAYA DELILAH"},
-      {start:"21:45", end:"23:15", ly:"EZRA COLLECTIVE"},
+      {start:"12:10", end:"13:00", name:"CHAPPO"},
+      {start:"13:50", end:"14:50", name:"奇妙礼太郎BAND"},
+      {start:"15:40", end:"16:40", name:"ALTIN GÜN"},
+      {start:"17:40", end:"18:40", name:"OGRE YOU ASSHOLE"},
+      {start:"19:30", end:"20:40", name:"ANTIBALAS"},
+      {start:"21:30", end:"23:00", name:"LETTUCE"},
     ],
-    SUNDAY: [
-      {start:"22:00", end:"23:00", ly:"(2025は別ステージ深夜枠)"},
-      {start:"23:30", end:"24:30", ly:"(2025は別ステージ深夜枠)"},
-      {start:"25:00", end:"26:00", ly:"(2025は別ステージ深夜枠)"},
-      {start:"26:30", end:"27:30", ly:"(2025は別ステージ深夜枠)"},
-      {start:"28:00", end:"29:00", ly:"(2025は別ステージ深夜枠)"},
+    ECHO: [
+      {start:"13:00", end:"13:40", name:"クマイルス"},
+      {start:"14:50", end:"15:30", name:"MIZ"},
+      {start:"16:40", end:"17:20", name:"Mateus Asato"},
+      {start:"18:40", end:"19:20", name:"井上園子"},
+      {start:"20:40", end:"21:20", name:"Black Boboi"},
+    ],
+    AVALON: [
+      {start:"12:10", end:"13:00", name:"Upendra and friends plus Mr. Sunil"},
+      {start:"13:50", end:"14:40", name:"TAKUTO AND NEKKOYA BAND"},
+      {start:"15:40", end:"16:30", name:"藤田悠也"},
+      {start:"17:40", end:"18:30", name:"almenialva"},
+      {start:"19:40", end:"20:40", name:"BAD TRIP SUMMER (Night Ambient Set)"},
+    ],
+    CRYSTAL: [
+      {start:"22:30", end:"23:45", name:"DJ GONCHAN"},
+      {start:"23:45", end:"24:30", name:"LA LOM"},
+      {start:"24:30", end:"25:30", name:"TXAKO"},
+      {start:"25:30", end:"26:15", name:"BOHEMIAN BETYARS"},
+      {start:"26:15", end:"27:15", name:"CUMBIA KID"},
+      {start:"27:15", end:"28:00", name:"SON ROMPE PERA"},
+      {start:"28:00", end:"29:00", name:"JAPAN CUMBIA FESTIVAL DJs"},
+    ],
+    PALACE: [
+      {start:"24:30", end:"24:45", name:"SAKURA CIRCUS"},
+      {start:"25:30", end:"25:45", name:"SAKURA CIRCUS"},
+      {start:"26:30", end:"26:45", name:"SAKURA CIRCUS"},
+    ],
+    ROOKIE: [
+      {start:"23:00", end:"23:30", name:"和泉眞生"},
+      {start:"24:00", end:"24:30", name:"GeGeGe"},
+      {start:"25:00", end:"25:30", name:"Bone Us"},
+      {start:"26:00", end:"26:30", name:"砂の壁"},
+      {start:"27:00", end:"27:30", name:"TIVE"},
+    ],
+    NAEBA: [
+      {start:"11:50", end:"12:30", name:"杉本ラララ"},
+      {start:"13:15", end:"13:55", name:"快速東京"},
+      {start:"15:10", end:"15:50", name:"ENTH"},
+      {start:"17:10", end:"17:50", name:"苗場音楽突撃隊"},
+      {start:"19:10", end:"19:50", name:"TENDOUJI"},
+      {start:"21:10", end:"21:50", name:"SHADOWS"},
+      {start:"22:45", end:"23:25", name:"GOOD4NOTHING"},
+    ],
+    PYRAMID: [
+      {start:"08:30", end:"09:20", name:"ヨガワークショップ / 渋木さやか"},
+      {start:"09:40", end:"10:40", name:"LOVE FOR NIPPON"},
+      {start:"11:30", end:"12:30", name:"el tempo"},
+      {start:"16:00", end:"18:00", name:"DJ QUIETSTORM"},
+      {start:"18:00", end:"20:00", name:"Kon & y.（Timothy Really）"},
+      {start:"20:00", end:"22:00", name:"CRAZY-T"},
+      {start:"22:30", end:"23:30", name:"君島大空 × 水野蒼生 電氣交響楽団"},
+      {start:"24:20", end:"25:20", name:"Aki"},
+    ],
+    GANBAN: [
+      {start:"23:30", end:"25:00", name:"SUGIURUMN"},
+      {start:"25:00", end:"26:00", name:"Natsuki Fujimoto (Tempalay)"},
+      {start:"26:00", end:"27:30", name:"E.O.U"},
+      {start:"27:30", end:"29:00", name:"youhei(BLACK GANION/UNTTLD)"},
+    ],
+    BLUE: [
+      {start:"12:30", end:"14:00", name:"DJ JIM"},
+      {start:"14:00", end:"14:50", name:"DJ HANA-G"},
+      {start:"14:50", end:"15:30", name:"Bamboo Boy"},
+      {start:"15:30", end:"16:10", name:"TOYO P"},
+      {start:"16:10", end:"17:00", name:"DJ SCNDLS"},
+      {start:"17:00", end:"17:50", name:"TEKASA"},
+      {start:"17:50", end:"18:40", name:"CUMBIA KID"},
+      {start:"18:40", end:"19:30", name:"RIHO"},
+      {start:"19:30", end:"20:20", name:"RJD"},
+      {start:"20:20", end:"21:10", name:"BABY SOUL"},
+      {start:"21:10", end:"22:00", name:"DOC.KOYAMANTADO"},
+      {start:"22:00", end:"23:00", name:"DJ COLA"},
+      {start:"23:00", end:"24:00", name:"DJ JIM"},
     ],
   },
   day2: {
     GREEN: [
-      {start:"11:00", end:"12:00", ly:"CA7RIEL & PACO AMOROSO"},
-      {start:"13:00", end:"14:00", ly:"君島大空 合奏形態"},
-      {start:"15:00", end:"16:00", ly:"STUTS (Band Set)"},
-      {start:"17:00", end:"18:00", ly:"JAMES BLAKE"},
-      {start:"19:00", end:"20:10", ly:"山下達郎"},
-      {start:"21:10", end:"22:40", ly:"VULFPECK"},
+      {start:"11:00", end:"12:00", name:"Bialystocks"},
+      {start:"13:00", end:"14:00", name:"Trueno"},
+      {start:"15:00", end:"16:00", name:"IO"},
+      {start:"17:00", end:"18:00", name:"BASEMENT JAXX"},
+      {start:"19:00", end:"20:10", name:"Fujii Kaze"},
+      {start:"21:10", end:"22:40", name:"KHRUANGBIN"},
     ],
     WHITE: [
-      {start:"12:10", end:"13:00", ly:"FERMIN MUGURUZA"},
-      {start:"14:00", end:"15:00", ly:"BALMING TIGER"},
-      {start:"15:50", end:"16:50", ly:"FAYE WEBSTER"},
-      {start:"17:40", end:"18:40", ly:"JJJ"},
-      {start:"19:50", end:"20:50", ly:"BARRY CAN'T SWIM"},
-      {start:"22:00", end:"23:30", ly:"FOUR TET"},
+      {start:"12:10", end:"13:00", name:"Riddim Saunter"},
+      {start:"13:50", end:"14:40", name:"BOHEMIAN BETYARS"},
+      {start:"15:30", end:"16:30", name:"Kroi"},
+      {start:"17:50", end:"18:50", name:"JOEY VALENCE & BRAE"},
+      {start:"19:50", end:"20:50", name:"XG"},
+      {start:"22:00", end:"23:15", name:"TOMORA"},
     ],
     RED: [
-      {start:"10:20", end:"11:00", ly:"downy"},
-      {start:"11:30", end:"12:10", ly:"jo0ji"},
-      {start:"12:40", end:"13:30", ly:"離婚伝説"},
-      {start:"14:00", end:"15:00", ly:"YHWH NAILGUN"},
-      {start:"16:00", end:"17:00", ly:"NEWDAD"},
-      {start:"18:00", end:"19:00", ly:"GINGER ROOT"},
-      {start:"20:10", end:"21:10", ly:"サンボマスター"},
-      {start:"23:30", end:"24:30", ly:"CONFIDENCE MAN"},
+      {start:"10:20", end:"11:00", name:"ブランデー戦記"},
+      {start:"11:30", end:"12:10", name:"SIX LOUNGE"},
+      {start:"12:40", end:"13:30", name:"QUADECA"},
+      {start:"14:00", end:"15:00", name:"THE BETHS"},
+      {start:"16:00", end:"17:00", name:"cero"},
+      {start:"18:00", end:"19:00", name:"THURSTON MOORE GROUP"},
+      {start:"20:10", end:"21:10", name:"サニーデイ・サービス"},
+      {start:"23:30", end:"24:20", name:"唾奇"},
+      {start:"24:30", end:"26:00", name:"KELLY LEE OWENS (DJ)"},
+      {start:"26:00", end:"27:30", name:"Weval DJ Set"},
+      {start:"27:30", end:"29:00", name:"Soichi Terada"},
     ],
     HEAVEN: [
-      {start:"11:30", end:"12:20", ly:"mei ehara"},
-      {start:"13:20", end:"14:20", ly:"THE PANTURAS"},
-      {start:"15:10", end:"16:10", ly:"踊ってばかりの国"},
-      {start:"17:10", end:"18:10", ly:"THE SKA FLAMES"},
-      {start:"19:00", end:"20:10", ly:"AFRICAN HEAD CHARGE"},
-      {start:"21:00", end:"22:30", ly:"EGO-WRAPPIN'"},
+      {start:"11:10", end:"12:00", name:"柴田聡子 (BAND SET)"},
+      {start:"12:50", end:"13:50", name:"YUUF"},
+      {start:"14:40", end:"15:40", name:"LA LOM"},
+      {start:"16:40", end:"17:40", name:"OAU"},
+      {start:"18:30", end:"19:40", name:"KOKOROKO"},
+      {start:"20:30", end:"22:00", name:"BADBADNOTGOOD"},
     ],
-    SUNDAY: [
-      {start:"22:00", end:"23:00", ly:"(2025 GAN-BAN: AAAMYYY)"},
-      {start:"23:30", end:"24:30", ly:"(2025 GAN-BAN: TYO GQOM)"},
-      {start:"25:00", end:"26:00", ly:"(2025 GAN-BAN: NTsKi)"},
-      {start:"26:30", end:"27:30", ly:"(2025 GAN-BAN: Night Tempo)"},
-      {start:"28:00", end:"29:00", ly:"(2025 GAN-BAN: Seiho)"},
+    ECHO: [
+      {start:"10:50", end:"11:30", name:"来島エル"},
+      {start:"12:15", end:"12:55", name:"タデクイ"},
+      {start:"13:50", end:"14:30", name:"neco眠る"},
+      {start:"15:40", end:"16:20", name:"CADEJO"},
+      {start:"17:50", end:"18:30", name:"DMBQ"},
+      {start:"19:50", end:"20:30", name:"Bongjeingan"},
+    ],
+    AVALON: [
+      {start:"11:00", end:"12:00", name:"ケロポンズ"},
+      {start:"13:00", end:"13:50", name:"MASH弦楽団"},
+      {start:"14:40", end:"15:20", name:"アトミック・カフェ トーク"},
+      {start:"16:30", end:"17:20", name:"梅井美咲"},
+      {start:"18:50", end:"19:40", name:"中西レモン＆すずめのティアーズ"},
+      {start:"20:50", end:"21:50", name:"jizue"},
+    ],
+    CRYSTAL: [
+      {start:"22:30", end:"23:45", name:"BABY SOUL"},
+      {start:"23:45", end:"24:30", name:"STOMPIN' RIFFRAFFS"},
+      {start:"24:30", end:"25:30", name:"GAZ MAYALL"},
+      {start:"25:30", end:"26:15", name:"THE KING LION"},
+      {start:"26:15", end:"27:15", name:"KING NABE"},
+      {start:"27:15", end:"28:00", name:"ZIONHILL SESSION"},
+      {start:"28:00", end:"29:00", name:"RUBY FLASHMAN"},
+    ],
+    PALACE: [
+      {start:"24:30", end:"24:45", name:"SAKURA CIRCUS"},
+      {start:"25:30", end:"25:45", name:"SAKURA CIRCUS"},
+      {start:"26:30", end:"26:45", name:"SAKURA CIRCUS"},
+    ],
+    ROOKIE: [
+      {start:"22:00", end:"22:30", name:"A_Root同根生"},
+      {start:"23:00", end:"23:30", name:"mayu"},
+      {start:"24:00", end:"24:30", name:"日髙晴野"},
+      {start:"25:00", end:"25:30", name:"Tocago"},
+      {start:"26:00", end:"26:30", name:"猿臂"},
+      {start:"27:00", end:"27:30", name:"二兆円"},
+    ],
+    NAEBA: [
+      {start:"12:10", end:"12:50", name:"Za SAVAGE"},
+      {start:"13:30", end:"14:10", name:"寺久保伶矢"},
+      {start:"15:10", end:"15:50", name:"NONE THE WiSER"},
+      {start:"17:10", end:"17:50", name:"ANIEKY A GO GO ! BAND"},
+      {start:"19:10", end:"19:50", name:"苗場音楽突撃隊"},
+      {start:"21:10", end:"21:50", name:"the Tiger"},
+      {start:"22:45", end:"23:25", name:"HOT DOG EXPRESS"},
+    ],
+    PYRAMID: [
+      {start:"08:30", end:"09:20", name:"ヨガワークショップ"},
+      {start:"09:40", end:"10:40", name:"GOMA"},
+      {start:"11:30", end:"12:30", name:"Michael Kaneko"},
+      {start:"16:30", end:"19:30", name:"YOSHIROTTEN"},
+      {start:"19:30", end:"20:30", name:"AOIZO"},
+      {start:"20:30", end:"22:00", name:"BAKU"},
+      {start:"23:00", end:"24:00", name:"ずっと真夜中でいいのに。"},
+      {start:"24:50", end:"25:50", name:"SILENT POETS"},
+    ],
+    GANBAN: [
+      {start:"23:30", end:"24:30", name:"AAAMYYY"},
+      {start:"24:30", end:"26:00", name:"MONJOE"},
+      {start:"26:00", end:"26:45", name:"O.N.O"},
+      {start:"26:45", end:"27:45", name:"MaL a.k.a. Primal Dub"},
+      {start:"27:45", end:"29:00", name:"Lomax"},
+    ],
+    BLUE: [
+      {start:"12:50", end:"14:00", name:"DJ JIM"},
+      {start:"14:00", end:"14:50", name:"DJ GONCHAN"},
+      {start:"14:50", end:"15:30", name:"NORTH KANTO REBEL SOUND CLASH"},
+      {start:"15:30", end:"16:20", name:"JAPAN CUMBIA FESTIVAL DJs"},
+      {start:"16:20", end:"17:10", name:"FUMINN"},
+      {start:"17:10", end:"18:00", name:"TXAKO"},
+      {start:"18:00", end:"18:50", name:"DJ TOMMY"},
+      {start:"18:50", end:"21:20", name:"CLUB SKA"},
+      {start:"21:20", end:"22:00", name:"SPECIAL GUEST"},
+      {start:"22:00", end:"23:00", name:"RIHO"},
+      {start:"23:00", end:"24:00", name:"DJ JIM"},
     ],
   },
   day3: {
     GREEN: [
-      {start:"11:00", end:"12:00", ly:"Red Hot Chilli Pipers"},
-      {start:"13:00", end:"14:00", ly:"森山直太朗"},
-      {start:"15:00", end:"16:00", ly:"Creepy Nuts"},
-      {start:"17:00", end:"18:00", ly:"LITTLE SIMZ"},
-      {start:"19:00", end:"20:10", ly:"RADWIMPS"},
-      {start:"21:10", end:"22:40", ly:"VAMPIRE WEEKEND"},
+      {start:"11:00", end:"12:00", name:"平井 大"},
+      {start:"13:00", end:"14:00", name:"DONAVON FRANKENREITER"},
+      {start:"15:00", end:"16:00", name:"KNEECAP"},
+      {start:"17:00", end:"18:00", name:"MOGWAI"},
+      {start:"19:00", end:"20:10", name:"平沢進+会人"},
+      {start:"21:10", end:"22:40", name:"MASSIVE ATTACK"},
     ],
     WHITE: [
-      {start:"12:30", end:"13:20", ly:"MONO NO AWARE"},
-      {start:"14:20", end:"15:20", ly:"SILICA GEL"},
-      {start:"16:20", end:"17:20", ly:"佐野元春 & THE COYOTE BAND"},
-      {start:"18:20", end:"19:20", ly:"ROYEL OTIS"},
-      {start:"20:10", end:"21:10", ly:"羊文学"},
-      {start:"22:20", end:"23:35", ly:"HAIM"},
+      {start:"12:40", end:"13:30", name:"礼賛"},
+      {start:"14:20", end:"15:10", name:"GRAPEVINE"},
+      {start:"16:10", end:"17:10", name:"SOFIA ISELLA"},
+      {start:"18:10", end:"19:10", name:"GEORDIE GREEP"},
+      {start:"20:00", end:"21:00", name:"Tempalay"},
+      {start:"22:10", end:"23:40", name:"MITSKI"},
     ],
     RED: [
-      {start:"10:20", end:"11:00", ly:"DYGL"},
-      {start:"11:30", end:"12:10", ly:"Tjiros"},
-      {start:"12:40", end:"13:30", ly:"MEI SEMONES"},
-      {start:"14:00", end:"15:00", ly:"まらしぃ"},
-      {start:"16:00", end:"17:00", ly:"ENGLISH TEACHER"},
-      {start:"18:00", end:"19:00", ly:"カネコアヤノ"},
-      {start:"20:10", end:"21:10", ly:"THE HIVES"},
+      {start:"10:20", end:"11:00", name:"Aooo"},
+      {start:"11:30", end:"12:10", name:"ANGINE DE POITRINE"},
+      {start:"12:40", end:"13:30", name:"浅井健一"},
+      {start:"14:00", end:"15:00", name:"THE LEMON TWIGS"},
+      {start:"16:00", end:"17:00", name:"the cabs"},
+      {start:"18:00", end:"19:00", name:"FRIKO"},
+      {start:"20:10", end:"21:10", name:"AMERICAN FOOTBALL"},
+      {start:"23:00", end:"23:45", name:"US"},
+      {start:"23:50", end:"24:35", name:"LAUSBUB"},
+      {start:"24:40", end:"25:40", name:"KIRARA"},
+      {start:"25:45", end:"27:00", name:"ICHIRO YAMAGUCHI (sakanaction)"},
+      {start:"27:00", end:"29:00", name:"TAKKYU ISHINO"},
     ],
     HEAVEN: [
-      {start:"11:30", end:"12:20", ly:"She Her Her Hers"},
-      {start:"13:20", end:"14:20", ly:"吾妻光良 & The Swinging Boppers"},
-      {start:"15:10", end:"16:10", ly:"GRACE BOWERS & THE HODGE PODGE"},
-      {start:"17:10", end:"18:10", ly:"JAKE SHIMABUKURO BAND"},
-      {start:"19:00", end:"20:10", ly:"ROBERT RANDOLPH"},
-      {start:"21:00", end:"22:30", ly:"GALACTIC"},
+      {start:"11:50", end:"12:40", name:"んoon"},
+      {start:"13:20", end:"14:20", name:"TĀL FRY"},
+      {start:"15:10", end:"16:10", name:"PLINI"},
+      {start:"17:10", end:"18:10", name:"THE BREAKS"},
+      {start:"19:00", end:"20:10", name:"GOGO PENGUIN"},
+      {start:"21:00", end:"22:30", name:"never young beach"},
     ],
-    SUNDAY: [
-      {start:"22:00", end:"23:00", ly:"(2025 GAN-BAN: PAS TASTA)"},
-      {start:"23:30", end:"24:30", ly:"(2025 GAN-BAN: TREKKIE TRAX CREW)"},
-      {start:"25:00", end:"26:00", ly:"(2025 GAN-BAN: E.O.U)"},
-      {start:"26:30", end:"27:30", ly:"(2025 GAN-BAN: TOREI)"},
-      {start:"28:00", end:"29:00", ly:"(2025 後夜祭DJ枠)"},
+    ECHO: [
+      {start:"12:40", end:"13:20", name:"藤原さくら"},
+      {start:"14:20", end:"15:00", name:"岡田拓郎"},
+      {start:"16:10", end:"16:50", name:"Noridogam"},
+      {start:"18:20", end:"19:00", name:"KIKI"},
+      {start:"20:10", end:"20:50", name:"BUFFALO DAUGHTER"},
+    ],
+    AVALON: [
+      {start:"11:40", end:"12:30", name:"Gingersamm"},
+      {start:"13:30", end:"14:10", name:"アトミック・カフェ 曽我部恵一"},
+      {start:"14:10", end:"14:50", name:"アトミック・カフェ トーク【戦争と平和】"},
+      {start:"15:35", end:"16:20", name:"アトミック・カフェ 忌野清志郎 PEACE SONGS"},
+      {start:"17:20", end:"18:10", name:"スーパー登山部"},
+      {start:"19:10", end:"20:00", name:"こたに"},
+      {start:"21:00", end:"22:00", name:"NakamuraEmi"},
+    ],
+    CRYSTAL: [
+      {start:"22:30", end:"23:45", name:"GEORGE WILLIAMS"},
+      {start:"23:45", end:"24:30", name:"SPECIAL GUEST"},
+      {start:"24:30", end:"25:30", name:"YUSUKE OGAWA"},
+      {start:"25:30", end:"26:15", name:"TĀL FRY"},
+      {start:"26:15", end:"27:15", name:"DAISUKE KURODA"},
+      {start:"27:15", end:"28:00", name:"EXPANSION"},
+      {start:"28:00", end:"29:00", name:"P.O.W ALL STARS"},
+    ],
+    PALACE: [
+      {start:"24:30", end:"24:45", name:"SAKURA CIRCUS"},
+      {start:"25:30", end:"25:45", name:"SAKURA CIRCUS"},
+      {start:"26:30", end:"26:45", name:"SAKURA CIRCUS"},
+    ],
+    ROOKIE: [
+      {start:"23:00", end:"23:30", name:"岩崎桃子"},
+      {start:"24:00", end:"24:30", name:"OLDMAN"},
+      {start:"25:00", end:"25:30", name:"SYAYOS"},
+      {start:"26:00", end:"26:30", name:"Wappen"},
+      {start:"27:00", end:"27:30", name:"It's US!!!!"},
+    ],
+    NAEBA: [
+      {start:"12:10", end:"12:50", name:"鬼の右腕"},
+      {start:"13:30", end:"14:10", name:"揺らぎ"},
+      {start:"15:10", end:"15:50", name:"saccharin"},
+      {start:"17:10", end:"17:50", name:"Keishi Tanaka"},
+      {start:"19:10", end:"19:50", name:"苗場音楽突撃隊"},
+      {start:"21:10", end:"21:50", name:"REGA"},
+      {start:"22:45", end:"23:25", name:"（出演者調整中）"},
+    ],
+    PYRAMID: [
+      {start:"08:30", end:"09:20", name:"ヨガワークショップ / 渋木さやか"},
+      {start:"09:40", end:"10:40", name:"チャラン・ポ・ランタン"},
+      {start:"11:30", end:"12:30", name:"Caravan"},
+      {start:"16:00", end:"19:00", name:"Kadal"},
+      {start:"19:00", end:"22:00", name:"KOTARO"},
+      {start:"22:30", end:"23:30", name:"蓮沼執太チーム"},
+      {start:"24:20", end:"25:20", name:"TENDRE"},
+    ],
+    GANBAN: [
+      {start:"23:30", end:"25:00", name:"TAKU INOUE"},
+      {start:"25:00", end:"28:00", name:"ANTS HOUSE (Nariaki & Nomizo & Rintaro Sekizuka)"},
+    ],
+    BLUE: [
+      {start:"12:00", end:"13:00", name:"DJ JIM"},
+      {start:"13:00", end:"13:40", name:"田原\"104\"洋"},
+      {start:"13:40", end:"14:30", name:"NAOKI IENAGA (DUB STORE RECORDS)"},
+      {start:"14:30", end:"15:10", name:"TIM ROCKINS"},
+      {start:"15:50", end:"16:30", name:"Nozomu"},
+      {start:"16:30", end:"17:10", name:"Can Dream®"},
+      {start:"17:10", end:"17:50", name:"Satria Ramadhan"},
+      {start:"17:50", end:"18:30", name:"JAMAiCAN TiME"},
+      {start:"18:30", end:"19:10", name:"RJD"},
+      {start:"19:10", end:"20:00", name:"HANASUBI"},
+      {start:"20:00", end:"20:40", name:"DJ JIM"},
+      {start:"20:40", end:"22:00", name:"Yutaro"},
+      {start:"22:00", end:"23:00", name:"DR. IHARA"},
+      {start:"23:00", end:"24:00", name:"DJ JIM"},
     ],
   },
 };
 
-/* =========================================================
-   2026 発表アーティスト (発表順)
-========================================================= */
-const ARTISTS_2026 = {
-  day1: {
-    GREEN: ["The xx","Hi-STANDARD","TURNSTILE","My Hair is Bad","LOYLE CARNER"],
-    WHITE: ["ASIAN KUNG-FU GENERATION","ARLO PARKS","KOTORI","SON ROMPE PERA","Yo-Sea","TORO Y MOI"],
-    RED:   ["HYUKOH","SNAIL MAIL","SORRY","TESTSET","w.o.d.","テレビ大陸音頭"],
-    HEAVEN:["LETTUCE","ALTIN GÜN","CHAPPO","奇妙礼太郎BAND","OGRE YOU ASSHOLE","TINARIWEN"],
-    SUNDAY:["Wata Igarashi","maya ongaku"],
-  },
-  day2: {
-    GREEN: ["KHRUANGBIN","Fujii Kaze","BASEMENT JAXX","Bialystocks","IO","Trueno","ROUTE 17 Rock'n'Roll ORCHESTRA"],
-    WHITE: ["TOMORA","XG","BOHEMIAN BETYARS","Kroi","Riddim Saunter","SIX LOUNGE","JOEY VALENCE & BRAE"],
-    RED:   ["サニーデイ・サービス","THE BETHS","ブランデー戦記","cero","QUADECA","THURSTON MOORE GROUP"],
-    HEAVEN:["BADBADNOTGOOD","KOKOROKO","LA LOM","OAU","柴田聡子 (BAND SET)","YUUF"],
-    SUNDAY:["唾奇","KELLY LEE OWENS (DJ)","Soichi Terada"],
-  },
-  day3: {
-    GREEN: ["MASSIVE ATTACK","平沢進+会人","MOGWAI","DONAVON FRANKENREITER","平井大","KNEECAP"],
-    WHITE: ["MITSKI","Tempalay","GRAPEVINE","礼賛","SOFIA ISELLA","GEORDIE GREEP"],
-    RED:   ["AMERICAN FOOTBALL","Aooo","浅井健一","the cabs","FRIKO","THE LEMON TWIGS","ANGINE DE POITRINE"],
-    HEAVEN:["never young beach","THE BREAKS","GOGO PENGUIN","んoon","PLINI","TĀL FRY"],
-    SUNDAY:["KIRARA","LAUSBUB","ICHIRO YAMAGUCHI","TAKKYU ISHINO"],
-  },
-};
-
-/* =========================================================
-   予測ロジック
-========================================================= */
-function predictSlots(day, stage){
-  const tmpl = SLOTS_2025[day][stage] || [];
-  const artists = (ARTISTS_2026[day] && ARTISTS_2026[day][stage]) || [];
-  const out = tmpl.map(s => ({...s, name:null, tba:true}));
-  const indices = out.map((_,i)=>i).sort((a,b) => toMin(out[b].start) - toMin(out[a].start));
-  artists.forEach((a, i) => {
-    if (i >= indices.length){
-      const lastIdx = indices[indices.length-1];
-      out[lastIdx].overflow = out[lastIdx].overflow || [];
-      out[lastIdx].overflow.push(a);
-      return;
-    }
-    const idx = indices[i];
-    out[idx].name = a;
-    out[idx].tba = false;
-  });
-  return out;
+function getSlots(day, stage){
+  return (TIMETABLE_2026[day] && TIMETABLE_2026[day][stage]) || [];
 }
 
 /* =========================================================
    State
 ========================================================= */
-const LS_KEY = "fr2026_my_tt_v2";
+const LS_KEY = "fr2026_my_tt_v3";
 let myList = loadMyList();
 let currentDay = "day1";
 let currentView = "predict";
@@ -494,14 +639,13 @@ function loadMyList(){
 }
 function saveMyList(){ localStorage.setItem(LS_KEY, JSON.stringify(myList)); }
 function slotKey(day, stage, slot){
-  return `${day}|${stage}|${slot.start}|${slot.name||slot.ly}`;
+  return `${day}|${stage}|${slot.start}|${slot.name}`;
 }
 function isAdded(day, stage, slot){
   const id = slotKey(day, stage, slot);
   return myList.some(m => m.id === id);
 }
 function toggleSlot(day, stage, slot){
-  if (slot.tba) return;
   const id = slotKey(day, stage, slot);
   const i = myList.findIndex(m => m.id === id);
   if (i >= 0){ myList.splice(i,1); }
@@ -516,9 +660,9 @@ function toggleSlot(day, stage, slot){
 /* =========================================================
    Time helpers
 ========================================================= */
-const TIME_START = "10:00";
-const TIME_END   = "29:30";
-const STEP_MIN   = 5; // 5分刻み(21:45 / 23:15 / 23:35 等の枠を正しく配置するため)
+const TIME_START = "08:00";
+const TIME_END   = "29:00";
+const STEP_MIN   = 5; // 5分刻み
 function toMin(t){ const [h,m] = t.split(":").map(Number); return h*60+m; }
 function fromMin(min){
   const h = Math.floor(min/60), m = min%60;
@@ -539,7 +683,7 @@ function renderPredict(){
   const rows     = (endMin - startMin) / STEP_MIN;
   const visibleStages = STAGES;
   const isMobile = window.matchMedia("(max-width:640px)").matches;
-  const stageColMin = isMobile ? 110 : 170;
+  const stageColMin = isMobile ? 108 : 150;
   const timeColW = isMobile ? 44 : 56;
   grid.style.gridTemplateColumns = `${timeColW}px repeat(${visibleStages.length}, minmax(${stageColMin}px,1fr))`;
   grid.style.gridTemplateRows = `34px repeat(${rows}, ${isMobile?6:7}px)`;
@@ -558,6 +702,7 @@ function renderPredict(){
     h.className = "tt-stage-head";
     h.textContent = st.label;
     h.style.gridColumn = String(idx+2); h.style.gridRow = "1";
+    h.style.color = STAGE_COLORS[st.key];
     grid.appendChild(h);
   });
 
@@ -581,37 +726,21 @@ function renderPredict(){
 
   // slots
   visibleStages.forEach((st, stIdx) => {
-    const slots = predictSlots(currentDay, st.key);
+    const slots = getSlots(currentDay, st.key);
     slots.forEach(s => {
       const startRow = (toMin(s.start) - startMin)/STEP_MIN + 2;
       const endRow   = (toMin(s.end)   - startMin)/STEP_MIN + 2;
       const div = document.createElement("div");
       const cls = ["tt-slot", `s-${st.key}`];
-      if (s.tba) cls.push("tba");
-      if (!s.tba && isAdded(currentDay, st.key, s)) cls.push("added");
+      if (isAdded(currentDay, st.key, s)) cls.push("added");
       div.className = cls.join(" ");
+      div.style.background = STAGE_COLORS[st.key];
       div.style.gridColumn = String(stIdx+2);
       div.style.gridRow = `${startRow} / ${endRow}`;
-      let html = "";
-      if (s.tba){
-        html = `<div class="name">TBA</div>
-                <div class="time">${displayTime(s.start)} - ${displayTime(s.end)}</div>
-                <div class="ly">昨年: ${escapeHtml(s.ly)}</div>`;
-      } else {
-        html = `<div class="name">${escapeHtml(s.name)}</div>
-                <div class="time">${displayTime(s.start)} - ${displayTime(s.end)}</div>
-                <div class="ly">昨年: ${escapeHtml(s.ly)}</div>`;
-        if (s.overflow && s.overflow.length){
-          html += `<div class="ly">+ ${s.overflow.map(escapeHtml).join(", ")}</div>`;
-        }
-      }
-      div.innerHTML = html;
-      if (!s.tba){
-        div.title = isAdded(currentDay, st.key, s) ? "クリックで削除" : "クリックでマイタイムテーブルに追加";
-        div.addEventListener("click", () => toggleSlot(currentDay, st.key, s));
-      } else {
-        div.title = `昨年の同枠: ${s.ly}`;
-      }
+      div.innerHTML = `<div class="name">${escapeHtml(s.name)}</div>
+              <div class="time">${displayTime(s.start)} - ${displayTime(s.end)}</div>`;
+      div.title = isAdded(currentDay, st.key, s) ? "クリックで削除" : "クリックでマイタイムテーブルに追加";
+      div.addEventListener("click", () => toggleSlot(currentDay, st.key, s));
       grid.appendChild(div);
     });
   });
@@ -627,7 +756,7 @@ function renderMy(){
   if (myList.length === 0){
     const e = document.createElement("div");
     e.className = "my-empty";
-    e.textContent = "予測タイムテーブルでアーティスト枠をタップして追加してください。";
+    e.textContent = "タイムテーブルでアーティスト枠をタップして追加してください。";
     root.appendChild(e);
     return;
   }
@@ -704,8 +833,8 @@ function renderMyTimetable(root){
   // 表示時間レンジ(自動フィット)
   const mins = items.map(m => toMin(m.start));
   const maxs = items.map(m => toMin(m.end));
-  const rangeStart = Math.max(toMin("10:00"), Math.floor((Math.min(...mins) - 30) / 60) * 60);
-  const rangeEnd   = Math.min(toMin("29:30"), Math.ceil((Math.max(...maxs) + 30) / 60) * 60);
+  const rangeStart = Math.max(toMin(TIME_START), Math.floor((Math.min(...mins) - 30) / 60) * 60);
+  const rangeEnd   = Math.min(toMin(TIME_END), Math.ceil((Math.max(...maxs) + 30) / 60) * 60);
   const rows = (rangeEnd - rangeStart) / STEP_MIN;
 
   const wrap = document.createElement("div");
@@ -759,6 +888,7 @@ function renderMyTimetable(root){
     const endRow   = (toMin(m.end)   - rangeStart)/STEP_MIN + 2;
     const div = document.createElement("div");
     div.className = `tt-slot s-${m.stage}`;
+    div.style.background = STAGE_COLORS[m.stage];
     div.style.gridColumn = `${colStart} / span ${span}`;
     div.style.gridRow = `${startRow} / ${endRow}`;
     div.innerHTML = `
